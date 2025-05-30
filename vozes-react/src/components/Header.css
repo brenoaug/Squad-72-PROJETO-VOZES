@@ -1,12 +1,6 @@
-body.dark-theme,
-body.dark-theme .navbar,
-body.dark-theme .offcanvas,
-body.dark-theme .dropdown-menu,
-body.dark-theme .nav-link,
-body.dark-theme .navbar-brand,
-body.dark-theme .offcanvas-title {
+body.dark-theme .offcanvas {
   color: #e0e0e0 !important;
-  background-color: #232323 !important;
+  background-color: #212529 !important;
 }
 
 body.dark-theme .nav-link.active,
@@ -17,7 +11,7 @@ body.dark-theme .nav-link:hover {
 
 body.dark-theme .dropdown-menu,
 body.dark-theme .dropdown-item {
-  background-color: #353535 !important;
+  background-color: #212529 !important;
   color: #e0e0e0 !important;
   border-color: #444;
 }
@@ -63,4 +57,16 @@ body:not(.dark-theme) .navbar-toggler {
 
 body:not(.dark-theme) .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(85,85,85,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+
+body,
+.navbar,
+.offcanvas,
+.dropdown-menu,
+.navbar-toggler,
+.navbar-toggler-icon,
+button,
+.nav-link {
+  transition: none !important;
 }
