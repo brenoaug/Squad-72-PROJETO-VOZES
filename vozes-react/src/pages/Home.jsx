@@ -1,4 +1,4 @@
-import { Container, Card, Button } from "react-bootstrap";
+import { Container, Card, Button, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import lgbtFlag from "../assets/lgbt-flag-circle.svg";
 import MarkVozesColorized from "../assets/mark-all-colorized.svg";
@@ -26,9 +26,12 @@ function Home() {
       }`}
     >
       <Container className="d-flex align-items-center flex-wrap gap-4">
-        <Card style={{ width: "68.75rem" }}>
+        <Card
+          className={`${dark ? "bg-secondary text-light" : ""}`}
+          style={{ width: "68.75rem" }}
+        >
           <Card.Body>
-            <Container className="d-flex flex-collumn flex-wrap">
+            <Container fluid className="d-flex flex-collumn flex-wrap">
               <img src={MarkVozesColorized} alt="Vozes" width="300" />
               <Card.Title
                 className="text-start"
@@ -62,7 +65,7 @@ function Home() {
           <Card.Body>
             <Card.Title className="text-center">
               {" "}
-              <img src={lgbtFlag} alt="lgbt" width="24" height="24" />
+              <img src={lgbtFlag} alt="icone bandeira lgbt circular" width="24" height="24" />
             </Card.Title>
             <Card.Text>
               Embora os números não diferenciem especificamente entre gays e
