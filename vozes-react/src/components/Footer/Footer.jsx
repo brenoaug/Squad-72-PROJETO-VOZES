@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import "./Footer.css";
-import markDark from "../assets/mark-all-dark.svg";
-import markLight from "../assets/mark-all-light.svg";
+import markDark from "../../assets/mark-all-dark.svg";
+import markLight from "../../assets/mark-all-light.svg";
 
 export default function Footer() {
   const [dark, setDark] = useState(
@@ -22,14 +22,14 @@ export default function Footer() {
 
   return (
     <footer
-      className={`text-center text-lg-start border-top mt-5 ${
+      className={`text-center text-lg-start ${
         dark ? "bg-dark text-light" : "bg-light text-dark"
       }`}
     >
       <section>
         <Container className="text-start text-md-start mt-6">
-          <Row className="mt-3">
-            <Col md={3} lg={4} xl={3} className="mx-start mb-4">
+          <Row className="mt-0">
+            <Col md={3} lg={4} xl={5} className="mx-start mb-4">
               <a href="#">
                 <img
                   src={dark ? markLight : markDark}
@@ -47,30 +47,32 @@ export default function Footer() {
           </Row>
         </Container>
       </section>
-      <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-        <div className="me-5 d-none d-lg-block">
-          <span>Siga-nos nas Redes:</span>
-        </div>
-        <div>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-facebook"></i>
-          </a>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-twitter"></i>
-          </a>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-google"></i>
-          </a>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-instagram"></i>
-          </a>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-linkedin"></i>
-          </a>
-          <a href="#" className="me-4 text-reset">
-            <i className="bi bi-github"></i>
-          </a>
-        </div>
+      <section className="border-bottom">
+        <Container className="d-flex justify-content-start justify-content-lg-between p-4">
+          <div className="me-5 d-none d-lg-block">
+            <span>Siga-nos nas Redes:</span>
+          </div>
+          <div>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-facebook"></i>
+            </a>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-twitter"></i>
+            </a>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-google"></i>
+            </a>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-instagram"></i>
+            </a>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-linkedin"></i>
+            </a>
+            <a href="#" className="me-4 text-reset">
+              <i className="bi bi-github"></i>
+            </a>
+          </div>
+        </Container>
       </section>
 
       <div

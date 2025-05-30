@@ -1,4 +1,4 @@
-import logo from "../assets/logo.svg";
+import logo from "../../assets/logo.svg";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./Header.css";
 import {
@@ -39,6 +39,7 @@ function Header() {
         >
           <Offcanvas.Header closeButton>
             <Offcanvas.Title id="offcanvas-navbar-label">Menu</Offcanvas.Title>
+            
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="ms-auto">
