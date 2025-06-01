@@ -22,9 +22,9 @@ export default function Footer() {
 
   return (
     <footer
-      className={`text-center text-lg-start ${
+      className={`text-center text-lg-start border-top ${
         dark ? "bg-dark text-light" : "bg-light text-dark"
-      }`}
+      } `}
     >
       <section>
         <Container className="text-start text-md-start mt-6">
@@ -79,7 +79,7 @@ export default function Footer() {
         className={`text-center p-4 ${dark ? "bg-secondary text-light" : ""}`}
         style={{ backgroundColor: dark ? undefined : "rgba(0, 0, 0, 0.05)" }}
       >
-        © 2025 {" "}
+        © 2025{" "}
         <a className="text-reset fw-bold" href="#">
           Vozes
         </a>
