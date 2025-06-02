@@ -37,9 +37,8 @@ function Header() {
           bg={dark ? "dark" : "light"}
           variant={dark ? "dark" : "light"}
         >
-          <Offcanvas.Header closeButton>
+          <Offcanvas.Header closeButton closeVariant={dark ? "white" : "black"}>
             <Offcanvas.Title id="offcanvas-navbar-label">Menu</Offcanvas.Title>
-            
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="ms-auto">

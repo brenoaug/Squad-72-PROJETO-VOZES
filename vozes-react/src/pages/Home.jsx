@@ -75,6 +75,9 @@ function Home() {
                   total), 120 gays e lésbicas, e 59 em outras categorias.
                 </Card.Text>
               </Card.Body>
+              <Card.Footer className="fst-italic bg-transparent">
+                Fonte: Grupo Gay da Bahia (GGB).
+              </Card.Footer>
             </Card>
           </Col>
           <Col>
@@ -98,11 +101,14 @@ function Home() {
                   foram vítimas de agressões físicas.
                 </Card.Text>
               </Card.Body>
+              <Card.Footer className="fst-italic bg-transparent">
+                Fonte: Instituto DataFolha, 2023
+              </Card.Footer>
             </Card>
           </Col>
           <Col>
             <Card className={`${dark ? "bg-secondary text-light" : ""} h-100`}>
-              <Card.Body>
+              <Card.Body className="h-100">
                 <Card.Title className="text-center">
                   <img
                     src={lgbtFlag}
@@ -117,6 +123,9 @@ function Home() {
                   um aumento de 11% em relação a 2021.
                 </Card.Text>
               </Card.Body>
+              <Card.Footer className="fst-italic bg-transparent">
+                Fonte: Associação Nacional de Travestis e Transexuais (ANTRA).
+              </Card.Footer>
             </Card>
           </Col>
         </Row>
