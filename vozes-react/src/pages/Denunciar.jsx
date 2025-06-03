@@ -3,9 +3,6 @@ import {
   Card,
   Button,
   Form,
-  Row,
-  Col,
-  CardFooter,
   InputGroup,
 } from "react-bootstrap";
 

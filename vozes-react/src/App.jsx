@@ -5,12 +5,13 @@ import Home from "./pages/Home";
 import Denunciar from "./pages/Denunciar";
 import Contato from "./pages/Contato";
 import ButtonUpLight from "./components/Button/ButtonUpLight";
+import Sobre from "./pages/Sobre";
 
 function App() {
   return (
     <>
       <Header />
-      <Contato />
+      <Sobre />
       <ButtonUpLight />
       <Footer />
     </>
