@@ -1,6 +1,7 @@
 import { Container, Card, Button, Row, Col, CardFooter } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import lgbtFlag from "../assets/lgbt-flag-circle.svg";
+import "./Home.css"
 import MarkVozesColorized from "../assets/mark-all-colorized.svg";
 
 function Home() {
@@ -28,7 +29,7 @@ function Home() {
       <Container className="d-flex align-items-center flex-wrap gap-4">
         <Row className="flex-grow-1">
           <Col>
-            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100`}>
+            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 strong principal`}>
               <Card.Body>
                 <Card.Title className=" flex-row">
                   <img
@@ -37,7 +38,7 @@ function Home() {
                     width="200"
                     className="mb-3 d-block"
                   />
-                  <h1 className="display-4">
+                  <h1 className="display-4 ">
                     Denuncie a violência contra LGBTQIAPN+
                   </h1>
                 </Card.Title>
@@ -50,7 +51,7 @@ function Home() {
                   Sua denúncia pode ajudar a promover mudanças e ampliar a
                   visibilidade dos problemas enfrentados pela comunidade.
                 </Card.Text>
-                <Button variant={`${dark ? "light" : "dark"} `}>
+                <Button variant={`${dark ? "light" : "dark"}`}>
                   Faça Sua Denúncia
                 </Button>
               </Card.Body>
@@ -82,7 +83,7 @@ function Home() {
           </Col>
           <Col>
             <Card
-              className={`${dark ? "bg-secondary text-light" : ""} main h-100`}
+              className={`${dark ? "bg-secondary text-light" : ""} h-100`}
             >
               <Card.Body>
                 <Card.Title className="text-center">

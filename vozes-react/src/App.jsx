@@ -11,7 +11,7 @@ function App() {
   return (
     <>
       <Header />
-      <Sobre />
+      <Home />
       <ButtonUpLight />
       <Footer />
     </>
