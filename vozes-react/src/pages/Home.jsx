@@ -1,8 +1,10 @@
 import { Container, Card, Button, Row, Col, CardFooter } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import lgbtFlag from "../assets/lgbt-flag-circle.svg";
+import transFlag from "../assets/trans-flag-icon.svg"
 import "./Home.css"
 import MarkVozesColorized from "../assets/mark-all-colorized.svg";
+
 
 function Home() {
   const [dark, setDark] = useState(
@@ -60,12 +62,12 @@ function Home() {
         </Row>
 
         <Row>
-          <Col>
-            <Card className={`card-home ${dark ? "bg-secondary text-light" : ""}`}>
+          <Col className="mb-4">
+            <Card className={`card-home h-100 ${dark ? "bg-secondary text-light" : ""}`}>
               <Card.Body>
                 <Card.Title
                   className="text-center"
-                  style={{ fontSize: "24px" }}
+                  style={{ fontSize: "30px" }}
                 >
                   <i className="bi bi-graph-up-arrow"></i>
                 </Card.Title>
@@ -81,9 +83,9 @@ function Home() {
               </Card.Footer>
             </Card>
           </Col>
-          <Col>
+          <Col className="mb-4">
             <Card
-              className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home`}
+              className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home `}
             >
               <Card.Body>
                 <Card.Title className="text-center">
@@ -91,8 +93,8 @@ function Home() {
                   <img
                     src={lgbtFlag}
                     alt="icone bandeira lgbt circular"
-                    width="24"
-                    height="24"
+                    width="30"
+                    height="30"
                   />
                 </Card.Title>
                 <Card.Text>
@@ -107,15 +109,15 @@ function Home() {
               </Card.Footer>
             </Card>
           </Col>
-          <Col>
+          <Col className="mb-4">
             <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home`}>
               <Card.Body className="h-100">
                 <Card.Title className="text-center">
                   <img
-                    src={lgbtFlag}
-                    alt="icone bandeira lgbt circular"
-                    width="24"
-                    height="24"
+                    src={transFlag}
+                    alt="icone bandeira trans circular"
+                    width="30"
+                    height="30"
                   />
                 </Card.Title>
                 <Card.Text>
