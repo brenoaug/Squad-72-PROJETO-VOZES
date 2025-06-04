@@ -53,7 +53,7 @@ function Home() {
                   Sua denúncia pode ajudar a promover mudanças e ampliar a
                   visibilidade dos problemas enfrentados pela comunidade.
                 </Card.Text>
-                <Button variant={`${dark ? "light" : "dark"}`}>
+                <Button variant={`${dark ? "light" : "primary"}`}>
                   Faça Sua Denúncia
                 </Button>
               </Card.Body>
