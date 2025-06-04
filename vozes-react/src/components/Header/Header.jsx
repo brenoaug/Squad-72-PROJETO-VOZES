@@ -10,6 +10,7 @@ import {
   Button,
 } from "react-bootstrap";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [dark, setDark] = useState(false);
@@ -26,7 +27,7 @@ function Header() {
       variant={dark ? "dark" : "light"}
     >
       <Container>
-        <Navbar.Brand href="#">
+        <Navbar.Brand as={Link} to="/">
           <img src={logo} alt="Logo do Projeto Vozes" width="50" height="50" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="offcanvas-navbar" />
@@ -42,16 +43,32 @@ function Header() {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="ms-auto">
-              <Nav.Link href="#">Início</Nav.Link>
+              <Nav.Link as={Link} to="/">
+                Início
+              </Nav.Link>
               <NavDropdown title="Ações" id="main-dropdown">
-                <NavDropdown.Item href="#">Denunciar</NavDropdown.Item>
-                <NavDropdown.Item href="#">Suporte</NavDropdown.Item>
-                <NavDropdown.Item href="#">Acompanhamento</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/denunciar">
+                  Denunciar
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/suporte">
+                  Suporte
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/acompanhamento">
+                  Acompanhamento
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#">Projeto</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/sobre">
+                  Projeto
+                </NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link href="#">Contato</Nav.Link>
-              <Nav.Link href="#" className="d-flex align-items-center">
+              <Nav.Link as={Link} to="/contato">
+                Contato
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                to="/login"
+                className="d-flex align-items-center"
+              >
                 <i className="bi bi-person-circle me-2"></i>
                 Login
               </Nav.Link>

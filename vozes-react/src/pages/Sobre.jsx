@@ -9,6 +9,7 @@ import {
 } from "react-bootstrap";
 import PeopleFlag from "../assets/people-flag.png";
 import { useState, useEffect } from "react";
+import "./Sobre.css"
 
 function Sobre() {
   const [dark, setDark] = useState(
@@ -33,7 +34,7 @@ function Sobre() {
       }`}
     >
       <Container>
-        <Card className={`${dark ? "bg-secondary text-light" : "bg-white"}`}>
+        <Card className={`${dark ? "bg-secondary text-light" : "bg-white"} card-sobre`}>
           <CardBody>
             <CardTitle className="display-5 text-start mb-4">
               Sobre o Projeto

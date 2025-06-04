@@ -1,0 +1,21 @@
+.formulario {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(0.5px);
+  transition: transform 0.3s cubic-bezier(0.4, 2, 0.6, 1), box-shadow 0.3s;
+}
+
+.formulario:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  background-color: #fff !important;
+}
+
+.bg-dark .formulario,
+.bg-secondary .formulario {
+  background-color: rgba(30, 30, 30, 0.85) !important;
+  color: #fff;
+}
+
+.bg-dark .formulario:hover,
+.bg-secondary .formulario:hover {
+  background-color: rgba(30, 30, 30, 1) !important;
+}

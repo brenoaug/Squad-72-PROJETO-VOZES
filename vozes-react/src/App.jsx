@@ -1,20 +1,26 @@
-import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home";
 import Denunciar from "./pages/Denunciar";
 import Contato from "./pages/Contato";
-import ButtonUpLight from "./components/Button/ButtonUpLight";
 import Sobre from "./pages/Sobre";
+import Footer from "./components/Footer/Footer";
+import ButtonUpLight from "./components/Button/ButtonUpLight";
+import "./App.css";
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Header />
-      <Home />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/denunciar" element={<Denunciar />} />
+        <Route path="/contato" element={<Contato />} />
+        <Route path="/sobre" element={<Sobre />} />
+      </Routes>
       <ButtonUpLight />
       <Footer />
-    </>
+    </BrowserRouter>
   );
 }
 

@@ -1,5 +1,6 @@
 import { Container, Card, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import "./Contato.css"
 
 function Contato() {
   const [dark, setDark] = useState(
@@ -24,7 +25,7 @@ function Contato() {
       }`}
     >
       <Container style={{ maxWidth: "600px" }}>
-        <Card className={`${dark ? "bg-secondary text-light" : "bg-white"}`}>
+        <Card className={`card-contato ${dark ? "bg-secondary text-light" : "bg-white"}`}>
           <Card.Body>
             <Card.Title className="display-5 text-center mb-4">
               Fale Conosco

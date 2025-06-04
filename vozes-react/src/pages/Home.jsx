@@ -22,14 +22,14 @@ function Home() {
 
   return (
     <main
-      className={`text-center text-lg-start pt-5 pb-5 ${
+      className={`home text-center text-lg-start pt-5 pb-5 ${
         dark ? "bg-dark text-light" : "bg-light text-dark"
       }`}
     >
       <Container className="d-flex align-items-center flex-wrap gap-4">
         <Row className="flex-grow-1">
           <Col>
-            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 strong principal`}>
+            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 strong principal card-home`}>
               <Card.Body>
                 <Card.Title className=" flex-row">
                   <img
@@ -61,7 +61,7 @@ function Home() {
 
         <Row>
           <Col>
-            <Card className={`${dark ? "bg-secondary text-light" : ""}`}>
+            <Card className={`card-home ${dark ? "bg-secondary text-light" : ""}`}>
               <Card.Body>
                 <Card.Title
                   className="text-center"
@@ -83,7 +83,7 @@ function Home() {
           </Col>
           <Col>
             <Card
-              className={`${dark ? "bg-secondary text-light" : ""} h-100`}
+              className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home`}
             >
               <Card.Body>
                 <Card.Title className="text-center">
@@ -108,7 +108,7 @@ function Home() {
             </Card>
           </Col>
           <Col>
-            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100`}>
+            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home`}>
               <Card.Body className="h-100">
                 <Card.Title className="text-center">
                   <img

@@ -6,6 +6,8 @@ import {
   InputGroup,
 } from "react-bootstrap";
 
+import "./Denunciar.css";
+
 import { useState, useEffect } from "react";
 
 function Denunciar() {
@@ -32,7 +34,7 @@ function Denunciar() {
       }`}
     >
       <Container>
-        <Card className={`text-center text-lg-start pt-5 pb-5 ${
+        <Card className={`formulario text-center text-lg-start pt-5 pb-5 ${
         dark ? "bg-secondary text-light" : "bg-light text-dark"
       }`}>
           <Card.Text className="h1 text-center">
