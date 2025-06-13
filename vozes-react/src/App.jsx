@@ -9,6 +9,7 @@ import Footer from "./components/Footer/Footer";
 import ButtonUpLight from "./components/Button/ButtonUpLight";
 import "./App.css";
 import CriarConta from "./pages/CriarConta";
+import MinhaConta from "./pages/MinhaConta";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/sobre" element={<Sobre />} />
         <Route path="/login" element={<Login />} />
         <Route path="/criarconta" element={<CriarConta />} />
+        <Route path="/minhaconta" element={<MinhaConta />} />
       </Routes>
       <ButtonUpLight />
       <Footer />
