@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="VozesApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="vozes-api" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="br.org.recode.vozes_api.VozesApiApplication" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="br.org.recode.vozes_api.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
