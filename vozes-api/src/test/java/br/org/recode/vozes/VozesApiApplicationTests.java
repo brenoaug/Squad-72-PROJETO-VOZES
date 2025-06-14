@@ -1,4 +1,4 @@
-package br.org.recode.vozes_api;
+package br.org.recode.vozes;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
