@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-<<<<<<< HEAD
-    <data-source source="LOCAL" name="vozes_db@localhost" uuid="b9fe9089-363a-400d-b134-70d9f887b906">
+    <data-source source="LOCAL" name="vozes_db@localhost" uuid="1a62be94-e02b-4bde-bbe6-3eb4a7509013">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/vozes-api/src/main/resources/application.properties</remarks>
-=======
-    <data-source source="LOCAL" name="vozes_db@localhost" uuid="3ad36b22-a7c3-41cc-816c-e748fa107524">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
->>>>>>> 459e58fedadcc68d141323e39b8fb403b3101ded
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/vozes_db</jdbc-url>
       <jdbc-additional-properties>
