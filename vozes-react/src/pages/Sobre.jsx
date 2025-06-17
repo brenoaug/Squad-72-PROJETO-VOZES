@@ -4,12 +4,11 @@ import {
   CardBody,
   CardFooter,
   CardTitle,
-  CardText,
-  CardImg,
+  CardText
 } from "react-bootstrap";
 import PeopleFlag from "../assets/people-flag.png";
 import { useState, useEffect } from "react";
-import "./Sobre.css"
+import "../style/Sobre.css"
 
 function Sobre() {
   const [dark, setDark] = useState(
@@ -26,6 +25,7 @@ function Sobre() {
     });
     return () => observer.disconnect();
   }, []);
+  
 
   return (
     <main

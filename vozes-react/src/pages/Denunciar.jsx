@@ -6,7 +6,7 @@ import {
   InputGroup,
 } from "react-bootstrap";
 
-import "./Denunciar.css";
+import "../style/Denunciar.css";
 
 import { useState, useEffect } from "react";
 

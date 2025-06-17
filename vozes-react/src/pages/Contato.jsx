@@ -1,6 +1,6 @@
 import { Container, Card, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import "./Contato.css"
+import "../style/Contato.css"
 
 function Contato() {
   const [dark, setDark] = useState(

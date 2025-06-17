@@ -1,17 +1,13 @@
 import {
   Container,
   Card,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  CardText,
-  CardImg,
+
 } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import PeopleFlag from "../assets/people-flag.png";
 import { useState, useEffect } from "react";
-import "./Sobre.css";
+
 
 function MinhaConta() {
   const [dark, setDark] = useState(
