@@ -12,16 +12,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/profissionais")
 public class ProfissionalController {
-    @Autowired
+    @Autowired // Injeta a dependência do ProfissionalRepository, permitindo o acesso ao banco de dados
     private ProfissionalRepository profissionalRepository;
 
-    @PostMapping
+    @CrossOrigin(origins = "*") // Permite requisições de qualquer origem
+    @PostMapping// Endpoint para salvar um novo profissional
     public void saveProfissional(@RequestBody ProfissionalRequestDTO data) {
         Profissional profissionalData = new Profissional(data);// cria uma nova instância de Profissional usando os dados do ProfissionalRequestDTO
         profissionalRepository.save(profissionalData);// salva o profissional no banco de dados
     }
 
-    @GetMapping
+    @CrossOrigin(origins = "*") // Dava erro ao tentar acessar o endpoint de profissionais, pois o navegador bloqueiava as requisições
+    @GetMapping// Endpoint para pegar os dados dos profissionais
     public List<ProfissionalResponseDTO> getAll() {
         return profissionalRepository
                 .findAll()//puxa todos os profissionais do banco de dados

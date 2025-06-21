@@ -7,4 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
-}
+}// Interface para o repositório de Profissional, estendendo JpaRepository para operações CRUD
