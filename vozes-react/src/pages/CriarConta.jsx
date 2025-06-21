@@ -106,10 +106,14 @@ function CriarConta() {
                   </Form.Text>
                 )}
               </Form.Group>
-
+              {confirmaSenha === senha && senha !== "" ? (
               <Button variant="primary" type="submit">
                 Criar Conta
-              </Button>
+              </Button>) : (
+              <Button variant="primary" type="submit" disabled>
+                Criar Conta
+                </Button>
+              )}
             </Form>
           </Card.Body>
         </Card>

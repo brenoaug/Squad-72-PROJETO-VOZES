@@ -1,4 +1,4 @@
-import { Card, Button, Container, Badge, Row, Col } from "react-bootstrap";
+import { Card, Container, Badge, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import psicologo from "../assets/psi.jpg";
 import advogado from "../assets/adv.jpg";
