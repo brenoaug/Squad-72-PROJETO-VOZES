@@ -24,7 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/criarconta" element={<CriarConta />} />
         <Route path="/minhaconta" element={<MinhaConta />} />
-        <Route path="/profissionais" element={<Profissionais />} />
+        <Route path="/suporte-acompanhamento" element={<Profissionais />} />
       </Routes>
       <ButtonUpLight />
       <Footer />

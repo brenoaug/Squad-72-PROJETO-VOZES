@@ -23,7 +23,6 @@ function CriarConta() {
     return () => observer.disconnect();
   }, []);
 
-
   return (
     <main
       className={`text-center text-lg-start pt-5 pb-5 ${
@@ -37,20 +36,45 @@ function CriarConta() {
           }`}
         >
           <Card.Text className="display-5 text-center mb-4">
-            Criar Conta
+            Seja Voluntário
+            {//Criar Conta
+            }
           </Card.Text>
           <Card.Body>
             <Form className="text-start">
               <Form.Group className="mb-3" controlId="formBasicName">
-                <Form.Label>Nome Completo </Form.Label>
+                <Form.Label>Nome e Sobrenome </Form.Label>
                 <Form.Control type="name" />
               </Form.Group>
-
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>E-mail</Form.Label>
-                <Form.Control type="email" />
+                <Form.Control
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="email@email.com"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicName">
+                <Form.Label>Telefone </Form.Label>
+                <Form.Control
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  placeholder="(99) 99999-9999"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Localização</Form.Label>
+                <Form.Control
+                  type="text"
+                  id="localizacao"
+                  name="localização"
+                  placeholder="Cidade, ES"
+                />
               </Form.Group>
 
+              {/*
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Senha</Form.Label>
                 <InputGroup>
@@ -71,7 +95,6 @@ function CriarConta() {
                   </Button>
                 </InputGroup>
               </Form.Group>
-
               <Form.Group className="mb-3" controlId="formBasicPasswordConfirm">
                 <Form.Label>Confirme a Senha</Form.Label>
                 <InputGroup>
@@ -105,15 +128,21 @@ function CriarConta() {
                     Senhas conferem!
                   </Form.Text>
                 )}
-              </Form.Group>
+                
+              </Form.Group>*/}
+              {/*}
               {confirmaSenha === senha && senha !== "" ? (
-              <Button variant="primary" type="submit">
-                Criar Conta
-              </Button>) : (
-              <Button variant="primary" type="submit" disabled>
-                Criar Conta
+                <Button variant="primary" type="submit">
+                  Criar Conta
                 </Button>
-              )}
+              ) : (
+                <Button variant="primary" type="submit" disabled>
+                  Criar Conta
+                </Button>
+              )}*/}
+              <Button variant="primary" type="submit">
+                Quero ser Voluntário
+              </Button>
             </Form>
           </Card.Body>
         </Card>

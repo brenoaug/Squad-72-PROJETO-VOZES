@@ -50,7 +50,7 @@ function Header() {
                 <NavDropdown.Item as={Link} to="/denunciar">
                   Denunciar
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/profissionais">
+                <NavDropdown.Item as={Link} to="/suporte-acompanhamento">
                   Suporte & Acompanhamento
                 </NavDropdown.Item>
                 <NavDropdown.Divider />

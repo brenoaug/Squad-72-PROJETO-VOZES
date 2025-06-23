@@ -4,6 +4,7 @@ import psicologo from "../assets/psi.jpg";
 import advogado from "../assets/adv.jpg";
 import "../style/Profissionais.css";
 import api from "../services/api";
+import { Link } from "react-router-dom";
 
 function Profissionais() {
   const [profissionais, setProfissionais] = useState([]);
@@ -24,7 +25,7 @@ function Profissionais() {
 
   useEffect(() => {
     api
-      .get("api/profissionais")
+      .get("/profissionais")
       .then((response) => {
         console.log("Dados recebidos:", response.data);
         setProfissionais(response.data);
@@ -56,6 +57,13 @@ function Profissionais() {
               para seguir em frente. Não se cale. Sua voz importa e sua
               segurança é nossa prioridade.
             </Card.Text>
+            <Card.Text className="text-start mb-4">
+              Se você é um profissional ou voluntário e deseja se cadastrar para
+              ajudar,{" "}
+              <Link to="/criarconta" className="text-decoration-none">
+                clique aqui
+              </Link>
+              </Card.Text>
           </Row>
           <Row className="g-3">
             {profissionais.map((profissional) => (
