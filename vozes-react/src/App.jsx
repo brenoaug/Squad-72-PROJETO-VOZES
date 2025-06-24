@@ -11,6 +11,7 @@ import "./App.css";
 import CriarConta from "./pages/CriarConta";
 import MinhaConta from "./pages/MinhaConta";
 import Profissionais from "./pages/Profissionais";
+import VoluntarioCadastro from "./pages/VoluntarioCadastro";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/criarconta" element={<CriarConta />} />
         <Route path="/minhaconta" element={<MinhaConta />} />
         <Route path="/suporte-acompanhamento" element={<Profissionais />} />
+        <Route path="/sejavoluntario" element={<VoluntarioCadastro />} />
       </Routes>
       <ButtonUpLight />
       <Footer />
