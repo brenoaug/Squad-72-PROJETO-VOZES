@@ -8,3 +8,4 @@ public record ProfissionalRequestDTO(String nome,
                                      String localizacao,
                                      TipoProfissional tipoProfissional) {
 }
+

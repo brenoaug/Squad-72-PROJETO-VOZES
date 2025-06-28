@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "profissionais") // estou dizendo que essa classe está mapeada para a tabela "profissionais" no banco de dados
 public class Profissional {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // o valor do id é automatico
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // o valor do id é automatico e é ordernado, ou seja, 1, 2, 3, etc.
     private Long id;
 
     @Column(nullable = false)// uma coluna que não pode ser nula
@@ -38,4 +38,5 @@ public class Profissional {
         this.localizacao = data.localizacao();
         this.tipoProfissional = data.tipoProfissional();
     }// Construtor que recebe um ProfissionalRequestDTO e inicializa os campos da entidade Profissional
+
 }

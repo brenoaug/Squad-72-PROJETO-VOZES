@@ -3,32 +3,83 @@ package br.org.recode.vozes.controller;
 import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
 import br.org.recode.vozes.DTO.ProfissionalResponseDTO;
 import br.org.recode.vozes.model.Profissional;
-import br.org.recode.vozes.repository.ProfissionalRepository;
+import br.org.recode.vozes.service.ProfissionalService; // Única dependência de lógica
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+// MUDANÇA 1: Adicionado o prefixo /api
 @RestController
-@RequestMapping("/profissionais")
+@RequestMapping("/api/profissionais")
+// MUDANÇA 2: @CrossOrigin agora está aqui, uma vez para toda a classe
+@CrossOrigin(origins = "*")// Permite requisições de qualquer origem
 public class ProfissionalController {
-    @Autowired // Injeta a dependência do ProfissionalRepository, permitindo o acesso ao banco de dados
-    private ProfissionalRepository profissionalRepository;
 
-    @CrossOrigin(origins = "*") // Permite requisições de qualquer origem
-    @PostMapping// Endpoint para salvar um novo profissional
-    public void saveProfissional(@RequestBody ProfissionalRequestDTO data) {
-        Profissional profissionalData = new Profissional(data);// cria uma nova instância de Profissional usando os dados do ProfissionalRequestDTO
-        profissionalRepository.save(profissionalData);// salva o profissional no banco de dados
+    // MUDANÇA 3: Injeção do Repository REMOVIDA. Apenas o Service é injetado.
+    @Autowired
+    private ProfissionalService profissionalService;
+
+    // --- Endpoints Refatorados ---
+
+    @PostMapping
+    public ResponseEntity<Profissional> criarProfissional(@RequestBody ProfissionalRequestDTO data) {
+        // MUDANÇA 4: Delegando a criação para o Service e retornando 201 Created
+        Profissional profissionalSalvo = profissionalService.criarProfissional(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(profissionalSalvo);
     }
 
-    @CrossOrigin(origins = "*") // Dava erro ao tentar acessar o endpoint de profissionais, pois o navegador bloqueiava as requisições
-    @GetMapping// Endpoint para pegar os dados dos profissionais
-    public List<ProfissionalResponseDTO> getAll() {
-        return profissionalRepository
-                .findAll()//puxa todos os profissionais do banco de dados
-                .stream()// transforma a lista de Profissional em uma Stream, usado para processar a lista de forma mais eficiente, permitindo operações como map, filter e collect
-                .map(ProfissionalResponseDTO::new)// converte cada Profissional em um ProfissionalResponseDTO
-                .toList();// converte a Stream de ProfissionalResponseDTO de volta para uma lista
+    @GetMapping
+    public ResponseEntity<Page<ProfissionalResponseDTO>> listarTodosProfissionais(
+            @PageableDefault(sort = {"id"}) Pageable paginacao) {
+        // Este já estava correto, chamando o service
+        Page<ProfissionalResponseDTO> profissionaisDTOPage = profissionalService.listarTodosProfissionais(paginacao);
+        return ResponseEntity.ok(profissionaisDTOPage);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProfissionalResponseDTO> buscarProfissionalPorId(@PathVariable Long id) {
+        try {
+            ProfissionalResponseDTO profissionalDTO = profissionalService.buscarPorId(id);
+            return ResponseEntity.ok(profissionalDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarProfissional(@PathVariable Long id, @RequestBody ProfissionalRequestDTO data) {
+        try {
+            Profissional profissionalAtualizado = profissionalService.atualizarProfissional(id, data);
+            return ResponseEntity.ok(profissionalAtualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarParcialProfissional(@PathVariable Long id, @RequestBody ProfissionalRequestDTO data) {
+        try {
+            Profissional profissionalAtualizado = profissionalService.atualizarParcialProfissional(id, data);
+            return ResponseEntity.ok(profissionalAtualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removerProfissional(@PathVariable Long id) {
+        try {
+            // MUDANÇA 5: Delegando a remoção para o Service
+            profissionalService.removerProfissional(id);
+            // Retorna 204 No Content, o padrão para um DELETE bem-sucedido
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            // Se o service lançou a exceção de "não encontrado"
+            return ResponseEntity.notFound().build();
+        }
     }
 }
