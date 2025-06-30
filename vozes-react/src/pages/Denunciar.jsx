@@ -37,7 +37,7 @@ function Denunciar() {
         <Card className={`formulario text-center text-lg-start pt-5 pb-5 ${
         dark ? "bg-secondary text-light" : "bg-light text-dark"
       }`}>
-          <Card.Text className="h1 text-center">
+          <Card.Text className="text-center mb-4 display-4">
             Formulário de Denúncia
           </Card.Text>
           <Card.Body>
@@ -95,7 +95,6 @@ function Denunciar() {
                 <Form.Control
                   as="textarea"
                   aria-label="With textarea"
-                  aria-label="Large"
                   aria-describedby="inputGroup-sizing-sm"
                 />
               </InputGroup>
@@ -105,7 +104,7 @@ function Denunciar() {
                 <Form.Control type="file" />
               </Form.Group>
 
-              <Button variant="primary" type="Enviar Denuncia">
+              <Button variant="primary" type="submit">
                 Enviar Denúncia
               </Button>
             </Form>

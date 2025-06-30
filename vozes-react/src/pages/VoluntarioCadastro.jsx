@@ -1,27 +1,62 @@
-import { Container, Card, Button, Form, InputGroup } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Card, Button, Form, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import api from "../services/api";
 
-function CriarConta() {
+const estadosBrasileiros = [
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
+];
+
+function VoluntarioCadastro() {
   const [dark, setDark] = useState(
     document.body.classList.contains("dark-theme")
   );
 
-  const [nome, setNome] = useState("");
+  const [primeiroNome, setPrimeiroNome] = useState("");
+  const [sobrenome, setSobrenome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [localizacao, setlocalizacao] = useState("");
   const [tipoProfissional, setTipoProfissional] = useState("ADVOGADO");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const localizacaoConcatenado = `${cidade} - ${estado}`;
+
+    const nome = `${primeiroNome} ${sobrenome}`.trim();
 
     const dadosDoFormulario = {
       nome: nome,
       email: email,
       telefone: telefone,
-      localizacao: localizacao,
+      localizacao: localizacaoConcatenado,
       tipoProfissional: tipoProfissional,
     };
 
@@ -32,11 +67,13 @@ function CriarConta() {
         `Profissional "${response.data?.nome || nome}" cadastrado com sucesso!`
       );
 
-      setNome("");
+      setPrimeiroNome("");
+      setSobrenome("");
       setEmail("");
       setTelefone("");
-      setlocalizacao("");
       setTipoProfissional("ADVOGADO");
+      setCidade("");
+      setEstado("");
     } catch (error) {
       console.error("Erro ao cadastrar profissional:", error);
       alert(
@@ -73,15 +110,29 @@ function CriarConta() {
           </Card.Text>
           <Card.Body>
             <Form className="text-start" onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formBasicName">
-                <Form.Label>Nome e Sobrenome </Form.Label>
-                <Form.Control
-                  type="name"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  required
-                />
-              </Form.Group>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridPrimeiroNome">
+                  <Form.Label>Primeiro Nome</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Seu primeiro nome"
+                    value={primeiroNome}
+                    onChange={(e) => setPrimeiroNome(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridSobrenome">
+                  <Form.Label>Sobrenome</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Seu sobrenome"
+                    value={sobrenome}
+                    onChange={(e) => setSobrenome(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </Row>
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>E-mail</Form.Label>
                 <Form.Control
@@ -106,18 +157,37 @@ function CriarConta() {
                   required
                 />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Localização</Form.Label>
-                <Form.Control
-                  type="text"
-                  id="localizacao"
-                  name="localização"
-                  placeholder="Cidade, ES"
-                  value={localizacao}
-                  onChange={(e) => setlocalizacao(e.target.value)}
-                  required
-                />
-              </Form.Group>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridCidade">
+                  <Form.Label>Cidade</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ex: São Paulo"
+                    value={cidade}
+                    onChange={(e) => setCidade(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridEstado">
+                  <Form.Label>Estado</Form.Label>
+                  <Form.Select
+                    value={estado}
+                    onChange={(e) => setEstado(e.target.value)}
+                    required
+                    aria-label="Selecione o Estado"
+                  >
+                    <option value="" disabled>
+                      Selecione o Estado
+                    </option>
+                    {estadosBrasileiros.map((uf) => (
+                      <option key={uf} value={uf}>
+                        {uf}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Row>
 
               <Form.Group className="mb-3">
                 <Form.Label>Tipo de Profissional:</Form.Label>
@@ -127,9 +197,9 @@ function CriarConta() {
                     type="radio"
                     id="tipo-advogado"
                     label="Advogado(a)"
-                    name="tipoProfissionalGroup" 
+                    name="tipoProfissionalGroup"
                     value="ADVOGADO"
-                    checked={tipoProfissional === "ADVOGADO"} 
+                    checked={tipoProfissional === "ADVOGADO"}
                     onChange={(e) => setTipoProfissional(e.target.value)}
                   />
                   <Form.Check
@@ -137,10 +207,11 @@ function CriarConta() {
                     type="radio"
                     id="tipo-psicologo"
                     label="Psicólogo(a)"
-                    name="tipoProfissionalGroup" 
+                    name="tipoProfissionalGroup"
                     value="PSICOLOGO"
-                    checked={tipoProfissional === "PSICOLOGO"} 
-                    onChange={(e) => setTipoProfissional(e.target.value)} radio
+                    checked={tipoProfissional === "PSICOLOGO"}
+                    onChange={(e) => setTipoProfissional(e.target.value)}
+                    radio
                   />
                 </div>
               </Form.Group>
@@ -155,4 +226,4 @@ function CriarConta() {
   );
 }
 
-export default CriarConta;
+export default VoluntarioCadastro;

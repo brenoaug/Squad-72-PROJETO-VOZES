@@ -1,4 +1,4 @@
-import { Card, Container, Badge, Row, Col } from "react-bootstrap";
+import { Card, Container, Badge, Row, Col, Pagination } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import psicologo from "../assets/psi.jpg";
 import advogado from "../assets/adv.jpg";
@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 
 function Profissionais() {
   const [profissionais, setProfissionais] = useState([]);
+  const [paginaAtual, setPaginaAtual] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
   const [dark, setDark] = useState(
     document.body.classList.contains("dark-theme")
   );
@@ -25,13 +27,18 @@ function Profissionais() {
 
   useEffect(() => {
     api
-      .get("/profissionais")
+      .get(`/profissionais?page=${paginaAtual}&size=9`)
       .then((response) => {
         console.log("Dados recebidos:", response.data);
-        setProfissionais(response.data);
+        setProfissionais(response.data.content);
+        setTotalPaginas(response.data.totalPages);
       })
       .catch((error) => console.error("Erro na requisição:", error));
-  }, []);
+  }, [paginaAtual]);
+
+  const handlePageChange = (pageNumber) => {
+    setPaginaAtual(pageNumber);
+  };
 
   return (
     <main
@@ -39,7 +46,7 @@ function Profissionais() {
         dark ? "bg-dark text-light" : "bg-light text-dark"
       }`}
     >
-      <Container className="align-items-center p-0">
+      <Container className="align-items-center p-0" data-bs-theme={dark ? "dark" : "light"}>
         <Card
           className={`container-profissionais d-flex flex-row flex-wrap gap-3 p-5 align-center ${
             dark ? "bg-secondary text-light" : "bg-light text-dark"
@@ -63,7 +70,7 @@ function Profissionais() {
               <Link to="/sejavoluntario" className="text-decoration-none">
                 clique aqui
               </Link>
-              </Card.Text>
+            </Card.Text>
           </Row>
           <Row className="g-3">
             {profissionais.map((profissional) => (
@@ -109,6 +116,41 @@ function Profissionais() {
                 </Card>
               </Col>
             ))}
+          </Row>
+          <Row className="w-100 justify-content-center mt-4">
+            <Col xs="auto">
+              <Pagination className={`${
+        dark ? "bg-dark text-light" : "bg-light text-dark"
+      }`}>
+                <Pagination.First
+                  onClick={() => handlePageChange(0)}
+                  disabled={paginaAtual === 0}
+                />
+                <Pagination.Prev
+                  onClick={() => handlePageChange(paginaAtual - 1)}
+                  disabled={paginaAtual === 0}
+                />
+
+                {[...Array(totalPaginas).keys()].map((page) => (
+                  <Pagination.Item
+                    key={page}
+                    active={page === paginaAtual}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page + 1}
+                  </Pagination.Item>
+                ))}
+
+                <Pagination.Next
+                  onClick={() => handlePageChange(paginaAtual + 1)}
+                  disabled={paginaAtual >= totalPaginas - 1}
+                />
+                <Pagination.Last
+                  onClick={() => handlePageChange(totalPaginas - 1)}
+                  disabled={paginaAtual >= totalPaginas - 1}
+                />
+              </Pagination>
+            </Col>
           </Row>
         </Card>
       </Container>
