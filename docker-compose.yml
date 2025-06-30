@@ -1,0 +1,56 @@
+# Versão do Docker Compose
+version: '3.8'
+
+# Definindo os serviços (contêineres)
+services:
+
+  # Serviço do Banco de Dados
+  db:
+    image: mysql:8.0 # Usa a imagem oficial do MySQL 8
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Senha do usuário root
+      MYSQL_DATABASE: vozes_db    # Nome do banco de dados que será criado
+      MYSQL_USER: root                # Nome do usuário
+      MYSQL_PASSWORD: password        # Senha do usuário
+    ports:
+      # Expõe a porta 3306 do contêiner na porta 3307 do seu computador
+      # Assim você pode conectar no banco usando um cliente como DBeaver/HeidiSQL em localhost:3307
+      - "3307:3306"
+    volumes:
+      # 'mysql-data' é um volume nomeado. O Docker gerencia ele para nós.
+      # Isso garante que seus dados não sejam perdidos quando o contêiner for recriado.
+      - mysql-data:/var/lib/mysql
+
+  # Serviço do Backend
+  backend:
+    build: ./backend/vozes-api/ # Diz para o Compose construir a imagem usando o Dockerfile na pasta ./backend
+    container_name: springboot-api
+    restart: on-failure
+    depends_on:
+      - db # Diz para esperar o serviço 'db' estar pronto antes de iniciar o backend
+    ports:
+      # Expõe a porta 8080 do contêiner na porta 8080 do seu computador
+      - "8080:8080"
+    environment:
+      # Passando as variáveis de ambiente que definimos no application.properties
+      DB_HOST: db # 'db' é o nome do serviço do MySQL, Docker usará isso como hostname
+      DB_NAME: minha_api_db
+      DB_USER: user
+      DB_PASSWORD: password
+
+  # Serviço do Frontend
+  frontend:
+    build: ./frontend/vozes-react
+    container_name: react-app
+    restart: on-failure
+    ports:
+      # Expõe a porta 80 do Nginx (dentro do contêiner) na porta 3000 do seu computador
+      - "3000:80"
+    depends_on:
+      - backend # Opcional, mas bom para garantir que a API suba primeiro
+
+# Volumes nomeados que o Docker gerencia
+volumes:
+  mysql-data:

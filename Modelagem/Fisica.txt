@@ -1,0 +1,57 @@
+CREATE DATABASE VOZES; 
+use VOZES;
+
+-- Criação da tabela Denuncia
+CREATE TABLE Denuncia (
+    idDenuncia INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    localincidente VARCHAR(255) NOT NULL,
+    descricao TEXT NOT NULL
+);
+
+-- Criação da tabela Contato
+CREATE TABLE Contato (
+    idContato INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    mensagem TEXT NOT NULL
+);
+
+-- Criação da tabela Anexos
+CREATE TABLE Anexos (
+    idAnexo INT AUTO_INCREMENT PRIMARY KEY,
+    tipoArquivo ENUM('foto', 'video') NOT NULL, -- Define se é foto ou vídeo
+    caminhoArquivo VARCHAR(255) NOT NULL, -- Caminho do arquivo no servidor
+    idDenuncia INT NOT NULL,
+    FOREIGN KEY (idDenuncia) REFERENCES Denuncia(idDenuncia) ON DELETE CASCADE
+);
+
+-- Inserções na tabela Denuncia
+INSERT INTO Denuncia (nome, email, data, localincidente, descricao)
+VALUES 
+('João Silva', 'joao@example.com', '2023-10-01', 'Rua Principal', 'Descrição do incidente 1.'),
+('Maria Oliveira', 'maria@example.com', '2023-10-02', 'Avenida Central', 'Descrição do incidente 2.'),
+('Carlos Souza', 'carlos@example.com', '2023-10-03', 'Praça da Liberdade', 'Descrição do incidente 3.');
+
+-- Inserções na tabela Contato
+INSERT INTO Contato (nome, email, mensagem)
+VALUES 
+('Ana Costa', 'ana@example.com', 'Mensagem de contato 1.'),
+('Pedro Rocha', 'pedro@example.com', 'Mensagem de contato 2.'),
+('Luiza Mendes', 'luiza@example.com', 'Mensagem de contato 3.');
+
+-- Inserções na tabela Anexos
+INSERT INTO Anexos (tipoArquivo, caminhoArquivo, idDenuncia)
+VALUES 
+('foto', '/caminho/foto1.jpg', 1),
+('video', '/caminho/video1.mp4', 1),
+('foto', '/caminho/foto2.jpg', 2),
+('video', '/caminho/video2.mp4', 2),
+('foto', '/caminho/foto3.jpg', 3),
+('video', '/caminho/video3.mp4', 3);
+
+select * FROM Denuncia;
+select * FROM Contato;
+select * FROM anexos;
