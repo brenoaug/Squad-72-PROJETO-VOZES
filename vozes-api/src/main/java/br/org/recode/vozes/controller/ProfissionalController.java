@@ -35,7 +35,6 @@ public class ProfissionalController {
     @GetMapping
     public ResponseEntity<Page<ProfissionalResponseDTO>> listarTodosProfissionais(
             @PageableDefault(sort = {"id"}) Pageable paginacao) {
-        // Este já estava correto, chamando o service
         Page<ProfissionalResponseDTO> profissionaisDTOPage = profissionalService.listarTodosProfissionais(paginacao);
         return ResponseEntity.ok(profissionaisDTOPage);
     }
