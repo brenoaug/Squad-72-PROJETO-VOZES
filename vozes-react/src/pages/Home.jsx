@@ -1,10 +1,9 @@
-import { Container, Card, Button, Row, Col, CardFooter } from "react-bootstrap";
+import { Container, Card, Button, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import lgbtFlag from "../assets/lgbt-flag-circle.svg";
-import transFlag from "../assets/trans-flag-icon.svg"
-import "./Home.css"
+import transFlag from "../assets/trans-flag-icon.svg";
+import "../style/Home.css";
 import MarkVozesColorized from "../assets/mark-all-colorized.svg";
-
 
 function Home() {
   const [dark, setDark] = useState(
@@ -31,7 +30,11 @@ function Home() {
       <Container className="d-flex align-items-center flex-wrap gap-4">
         <Row className="flex-grow-1">
           <Col>
-            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 strong principal card-home`}>
+            <Card
+              className={`${
+                dark ? "bg-secondary text-light" : ""
+              } h-100 strong principal card-home`}
+            >
               <Card.Body>
                 <Card.Title className=" flex-row">
                   <img
@@ -63,7 +66,11 @@ function Home() {
 
         <Row>
           <Col className="mb-4">
-            <Card className={`card-home h-100 ${dark ? "bg-secondary text-light" : ""}`}>
+            <Card
+              className={`card-home h-100 ${
+                dark ? "bg-secondary text-light" : ""
+              }`}
+            >
               <Card.Body>
                 <Card.Title
                   className="text-center"
@@ -85,7 +92,9 @@ function Home() {
           </Col>
           <Col className="mb-4">
             <Card
-              className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home `}
+              className={`${
+                dark ? "bg-secondary text-light" : ""
+              } h-100 card-home `}
             >
               <Card.Body>
                 <Card.Title className="text-center">
@@ -110,7 +119,11 @@ function Home() {
             </Card>
           </Col>
           <Col className="mb-4">
-            <Card className={`${dark ? "bg-secondary text-light" : ""} h-100 card-home`}>
+            <Card
+              className={`${
+                dark ? "bg-secondary text-light" : ""
+              } h-100 card-home`}
+            >
               <Card.Body className="h-100">
                 <Card.Title className="text-center">
                   <img
