@@ -74,7 +74,7 @@ function CriarConta() {
                 />
               </Form.Group>
 
-              {/*
+              
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Senha</Form.Label>
                 <InputGroup>
@@ -129,8 +129,8 @@ function CriarConta() {
                   </Form.Text>
                 )}
                 
-              </Form.Group>*/}
-              {/*}
+              </Form.Group>
+              
               {confirmaSenha === senha && senha !== "" ? (
                 <Button variant="primary" type="submit">
                   Criar Conta
@@ -139,7 +139,7 @@ function CriarConta() {
                 <Button variant="primary" type="submit" disabled>
                   Criar Conta
                 </Button>
-              )}*/}
+              )}
               <Button variant="primary" type="submit">
                 Quero ser Voluntário
               </Button>

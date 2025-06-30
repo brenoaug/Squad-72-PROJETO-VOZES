@@ -67,7 +67,7 @@ function Profissionais() {
             <Card.Text className="text-start mb-4">
               Se você é um profissional ou voluntário e deseja se cadastrar para
               ajudar,{" "}
-              <Link to="/sejavoluntario" className="text-decoration-none">
+              <Link to="/seja-voluntario" className="text-decoration-none">
                 clique aqui
               </Link>
             </Card.Text>

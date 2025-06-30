@@ -1,6 +1,15 @@
-import { Container, Card, Button, Form, Row, Col } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Button,
+  Form,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { IMaskInput } from "react-imask";
 
 const estadosBrasileiros = [
   "AC",
@@ -36,6 +45,9 @@ function VoluntarioCadastro() {
   const [dark, setDark] = useState(
     document.body.classList.contains("dark-theme")
   );
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [primeiroNome, setPrimeiroNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
@@ -43,7 +55,7 @@ function VoluntarioCadastro() {
   const [telefone, setTelefone] = useState("");
   const [tipoProfissional, setTipoProfissional] = useState("ADVOGADO");
   const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
+  const [estado, setEstado] = useState(estadosBrasileiros[0]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,20 +64,23 @@ function VoluntarioCadastro() {
 
     const nome = `${primeiroNome} ${sobrenome}`.trim();
 
+    const telefoneReformulado = telefone.replace(/\D/g, "");
+
     const dadosDoFormulario = {
       nome: nome,
       email: email,
-      telefone: telefone,
+      telefone: telefoneReformulado,
       localizacao: localizacaoConcatenado,
       tipoProfissional: tipoProfissional,
     };
 
     try {
-      const response = await api.post("/profissionais", dadosDoFormulario);
+      await api.post("/profissionais", dadosDoFormulario);
 
-      alert(
-        `Profissional "${response.data?.nome || nome}" cadastrado com sucesso!`
-      );
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 10000);
 
       setPrimeiroNome("");
       setSobrenome("");
@@ -73,12 +88,16 @@ function VoluntarioCadastro() {
       setTelefone("");
       setTipoProfissional("ADVOGADO");
       setCidade("");
-      setEstado("");
+      setEstado(estadosBrasileiros[0]);
     } catch (error) {
       console.error("Erro ao cadastrar profissional:", error);
-      alert(
-        "Ocorreu um erro ao cadastrar. Verifique o console e tente novamente."
-      );
+
+      const message =
+        error.response?.data?.message ||
+        "Ocorreu um erro ao cadastrar. Tente novamente mais tarde.";
+
+      setErrorMessage(message);
+      setShowErrorAlert(true);
     }
   };
 
@@ -108,6 +127,30 @@ function VoluntarioCadastro() {
           <Card.Text className="display-5 text-center mb-4">
             Seja Voluntário
           </Card.Text>
+
+          {showSuccessAlert && (
+            <Alert
+              variant="success"
+              onClose={() => setShowSuccessAlert(false)}
+              dismissible
+            >
+              <Alert.Heading>Cadastro realizado com sucesso!</Alert.Heading>
+              <p>
+                A equipe Vozes agradece imensamente por sua disposição em
+                ajudar.
+              </p>
+            </Alert>
+          )}
+          {showErrorAlert && (
+            <Alert
+              variant="danger"
+              onClose={() => setShowErrorAlert(false)}
+              dismissible
+            >
+              <Alert.Heading>Erro no Cadastro!</Alert.Heading>
+              <p>{errorMessage} </p>
+            </Alert>
+          )}
           <Card.Body>
             <Form className="text-start" onSubmit={handleSubmit}>
               <Row className="mb-3">
@@ -137,7 +180,6 @@ function VoluntarioCadastro() {
                 <Form.Label>E-mail</Form.Label>
                 <Form.Control
                   type="email"
-                  id="email"
                   name="email"
                   placeholder="email@email.com"
                   value={email}
@@ -146,14 +188,13 @@ function VoluntarioCadastro() {
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicName">
-                <Form.Label>Telefone </Form.Label>
+                <Form.Label>Telefone</Form.Label>
                 <Form.Control
-                  type="tel"
-                  id="telefone"
-                  name="telefone"
-                  placeholder="(99) 99999-9999"
+                  as={IMaskInput}
+                  mask="(00) 00000-0000"
                   value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
+                  onAccept={(value) => setTelefone(value)}
+                  placeholder="(99) 99999-9999"
                   required
                 />
               </Form.Group>
@@ -177,11 +218,8 @@ function VoluntarioCadastro() {
                     required
                     aria-label="Selecione o Estado"
                   >
-                    <option value="" disabled>
-                      Selecione o Estado
-                    </option>
-                    {estadosBrasileiros.map((uf) => (
-                      <option key={uf} value={uf}>
+                    {estadosBrasileiros.map((uf, idx) => (
+                      <option key={uf + "-" + idx} value={uf}>
                         {uf}
                       </option>
                     ))}
@@ -200,7 +238,7 @@ function VoluntarioCadastro() {
                     name="tipoProfissionalGroup"
                     value="ADVOGADO"
                     checked={tipoProfissional === "ADVOGADO"}
-                    onChange={(e) => setTipoProfissional(e.target.value)}
+                    onChange={() => setTipoProfissional("ADVOGADO")}
                   />
                   <Form.Check
                     inline
@@ -210,8 +248,7 @@ function VoluntarioCadastro() {
                     name="tipoProfissionalGroup"
                     value="PSICOLOGO"
                     checked={tipoProfissional === "PSICOLOGO"}
-                    onChange={(e) => setTipoProfissional(e.target.value)}
-                    radio
+                    onChange={() => setTipoProfissional("PSICOLOGO")}
                   />
                 </div>
               </Form.Group>

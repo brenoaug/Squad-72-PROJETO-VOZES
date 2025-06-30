@@ -23,10 +23,10 @@ function App() {
         <Route path="/contato" element={<Contato />} />
         <Route path="/sobre" element={<Sobre />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/criarconta" element={<CriarConta />} />
-        <Route path="/minhaconta" element={<MinhaConta />} />
+        <Route path="/criar-conta" element={<CriarConta />} />
+        <Route path="/minha-conta" element={<MinhaConta />} />
         <Route path="/suporte-acompanhamento" element={<Profissionais />} />
-        <Route path="/sejavoluntario" element={<VoluntarioCadastro />} />
+        <Route path="/seja-voluntario" element={<VoluntarioCadastro />} />
       </Routes>
       <ButtonUpLight />
       <Footer />
