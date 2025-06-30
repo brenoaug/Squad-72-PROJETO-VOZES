@@ -1,0 +1,10 @@
+node_modules
+build
+.dockerignore
+Dockerfile
+README.md
+package.json
+src
+public
+*.log
+*.env
