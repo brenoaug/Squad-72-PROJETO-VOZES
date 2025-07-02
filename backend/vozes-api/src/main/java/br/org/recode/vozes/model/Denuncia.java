@@ -35,7 +35,7 @@ public class Denuncia {
     @Column(columnDefinition = "TEXT", nullable = false) // Define que o campo é do tipo texto longo
     private String descricao;
 
-    @OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "denuncia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)//mappedBy indica que a relação é bidirecional e que o campo "denuncia" na classe Anexo é o responsável por mapear essa relação
     @JsonManagedReference
     private List<Anexo> anexos = new ArrayList<>();
 

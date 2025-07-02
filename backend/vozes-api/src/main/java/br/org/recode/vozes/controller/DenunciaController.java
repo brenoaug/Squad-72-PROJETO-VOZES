@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/denuncias")
-@CrossOrigin(origins = "*")
 public class DenunciaController {
     @Autowired
     private DenunciaService denunciaService; // Injeção de dependência do serviço de denúncias

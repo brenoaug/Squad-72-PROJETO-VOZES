@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/profissionais")
 // MUDANÇA 2: @CrossOrigin agora está aqui, uma vez para toda a classe
-@CrossOrigin(origins = "*")// Permite requisições de qualquer origem
 public class ProfissionalController {
 
     // MUDANÇA 3: Injeção do Repository REMOVIDA. Apenas o Service é injetado.

@@ -25,7 +25,7 @@ public class Anexo {
     private String caminhoArquivo;
 
     @ManyToOne(fetch = FetchType.LAZY)// fetch = FetchType.LAZY significa que os dados da entidade Denuncia não serão carregados até que sejam explicitamente solicitados
-    @JoinColumn(name = "idDenuncia", nullable = false)
+    @JoinColumn(name = "idDenuncia", nullable = false)// Define a coluna de junção que relaciona este anexo com uma denúncia
     @JsonBackReference
     private Denuncia denuncia;
 }
