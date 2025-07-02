@@ -1,0 +1,73 @@
+# ===================================================================
+# Arquivo .gitignore completo para um Monorepo
+# Backend: Java/Spring (IntelliJ)
+# Frontend: React/Vite (VS Code)
+# ===================================================================
+
+# 1. REGRAS GERAIS E DE SISTEMA OPERACIONAL
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+
+
+# 2. CONFIGURAÇÕES DE IDEs NA RAIZ
+# =================================
+# Visual Studio Code
+.vscode/
+
+
+# 3. AMBIENTE JAVA / SPRING BOOT (Backend)
+# =========================================
+# Pasta de saída da compilação
+backend/target/
+backend/build/
+
+# Logs específicos do Java
+backend/*.log
+
+# Arquivos de configuração do IntelliJ IDEA
+backend/.idea/
+backend/*.iml
+backend/*.iws
+backend/out/
+
+# Arquivos gerados pelo Maven/Gradle
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+backend/gradlew
+backend/gradlew.bat
+backend/.gradle/
+
+
+# 4. AMBIENTE JAVASCRIPT / REACT / VITE (Frontend)
+# =================================================
+# Dependências
+frontend/node_modules/
+
+# Saída de build
+frontend/dist/
+frontend/.output/
+frontend/.next/
+
+# Arquivos de ambiente locais (NUNCA envie segredos para o Git)
+frontend/.env.local
+frontend/.env.*.local
+frontend/!.env.example
+
+# Logs de dependências
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Cache de ferramentas
+frontend/.vite/
+frontend/.npm/
+frontend/.yarn/
+
+# Relatórios de teste
+frontend/coverage/
