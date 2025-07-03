@@ -24,7 +24,7 @@ public class DenunciaService {
         novaDenuncia.setData(data.data());
         novaDenuncia.setLocalIncidente(data.localIncidente());
         novaDenuncia.setDescricao(data.descricao());
-        novaDenuncia.setAutor(null);, 
+        novaDenuncia.setAutor(null);
 
         if (data.anexos() != null && !data.anexos().isEmpty()) {// Verifica se há anexos na denúncia
             List<Anexo> listaAnexos = new ArrayList<>();
