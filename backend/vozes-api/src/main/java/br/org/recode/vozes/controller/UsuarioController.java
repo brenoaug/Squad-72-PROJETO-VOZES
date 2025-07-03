@@ -15,18 +15,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// MUDANÇA 1: Adicionado o prefixo /api
+
 @RestController
 @RequestMapping("/api/usuarios")
-// MUDANÇA 2: @CrossOrigin agora está aqui, uma vez para toda a classe
 public class UsuarioController {
 
-    // MUDANÇA 3: Injeção do Repository REMOVIDA. Apenas o Service é injetado.
     @Autowired
     private UsuarioService usuarioService;
 
     // ENDPOINT PARA CRIAR USUÁRIO COMUM
-    @PostMapping("/comuns")
+    @PostMapping
     public ResponseEntity<?> criarUsuarioComum(@RequestBody UsuarioComumRequestDTO data) {
         try {
             Usuario usuarioSalvo = usuarioService.criarUsuarioComum(data);
@@ -37,7 +35,7 @@ public class UsuarioController {
     }
 
     // ENDPOINT GET ALL (PAGINADO)
-    @GetMapping("/comuns")
+    @GetMapping
     public ResponseEntity<Page<UsuarioResponseDTO>> listarTodosUsuarios(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page<UsuarioResponseDTO> paginaDeUsuarios = usuarioService.listarTodosUsuarios(paginacao);
@@ -45,7 +43,7 @@ public class UsuarioController {
     }
 
     // ENDPOINT GET BY ID
-    @GetMapping("comuns/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorId(@PathVariable Long id) {
         try {
             UsuarioResponseDTO usuarioDTO = usuarioService.buscarUsuarioPorId(id);
@@ -101,8 +99,8 @@ public class UsuarioController {
         }
     }
 
-    @DeleteMapping("/profissionais/{id}")
-    public ResponseEntity<?> removerProfissional(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removerUsuario(@PathVariable Long id) {
         try {
             // MUDANÇA 5: Delegando a remoção para o Service
             usuarioService.removerUsuario(id);
