@@ -39,4 +39,8 @@ public class Denuncia {
     @JsonManagedReference
     private List<Anexo> anexos = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_autor", referencedColumnName = "id", nullable = false)
+    private Usuario autor;
+
 }
