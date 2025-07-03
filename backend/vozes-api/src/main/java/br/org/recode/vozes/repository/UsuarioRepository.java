@@ -2,11 +2,14 @@ package br.org.recode.vozes.repository;
 
 import br.org.recode.vozes.model.Profissional;
 import br.org.recode.vozes.model.Usuario;
+import br.org.recode.vozes.model.UsuarioComum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
@@ -18,4 +21,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // e me entregue como objetos do tipo Profissional".
     @Query("SELECT p FROM Profissional p")
     Page<Profissional> findAllProfissionais(Pageable pageable);
+
+    @Query("SELECT u FROM UsuarioComum u")
+    Page<UsuarioComum> findAllComuns(Pageable pageable);
+
+    Optional<Usuario> findByEmail(String email);
 }

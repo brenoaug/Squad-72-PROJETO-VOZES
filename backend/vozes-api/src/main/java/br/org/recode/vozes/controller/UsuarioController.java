@@ -2,7 +2,10 @@ package br.org.recode.vozes.controller;
 
 import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
 import br.org.recode.vozes.DTO.ProfissionalResponseDTO;
+import br.org.recode.vozes.DTO.UsuarioComumRequestDTO;
+import br.org.recode.vozes.DTO.UsuarioResponseDTO;
 import br.org.recode.vozes.model.Profissional;
+import br.org.recode.vozes.model.Usuario;
 import br.org.recode.vozes.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,36 @@ public class UsuarioController {
     // MUDANÇA 3: Injeção do Repository REMOVIDA. Apenas o Service é injetado.
     @Autowired
     private UsuarioService usuarioService;
+
+    // ENDPOINT PARA CRIAR USUÁRIO COMUM
+    @PostMapping("/comuns")
+    public ResponseEntity<?> criarUsuarioComum(@RequestBody UsuarioComumRequestDTO data) {
+        try {
+            Usuario usuarioSalvo = usuarioService.criarUsuarioComum(data);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // ENDPOINT GET ALL (PAGINADO)
+    @GetMapping("/comuns")
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodosUsuarios(
+            @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        Page<UsuarioResponseDTO> paginaDeUsuarios = usuarioService.listarTodosUsuarios(paginacao);
+        return ResponseEntity.ok(paginaDeUsuarios);
+    }
+
+    // ENDPOINT GET BY ID
+    @GetMapping("comuns/{id}")
+    public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorId(@PathVariable Long id) {
+        try {
+            UsuarioResponseDTO usuarioDTO = usuarioService.buscarUsuarioPorId(id);
+            return ResponseEntity.ok(usuarioDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     // --- Endpoints Refatorados ---
 
