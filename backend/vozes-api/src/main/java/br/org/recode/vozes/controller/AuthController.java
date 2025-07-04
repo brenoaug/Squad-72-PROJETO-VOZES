@@ -33,18 +33,14 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDTO data) {
-        // 1. Cria um objeto de token de autenticação com as credenciais (email e senha).
-        var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
-
-        // 2. O Spring Security usa o AuthenticationManager para validar as credenciais.
-        //    Ele automaticamente chama nosso JpaUserDetailsService e PasswordEncoder.
-        var authentication = this.authenticationManager.authenticate(authenticationToken);
-
-        // 3. Se a autenticação for bem-sucedida, gera um token JWT para o usuário.
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
-
-        // 4. Retorna o token em um DTO de resposta com status 200 OK.
-        return ResponseEntity.ok(new LoginResponseDTO(tokenJWT));
+        try {
+            var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
+            var authentication = this.authenticationManager.authenticate(authenticationToken);
+            var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+            return ResponseEntity.ok(new LoginResponseDTO(tokenJWT));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Falha na autenticação: " + e.getMessage());
+        }
     }
 
     /**

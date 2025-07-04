@@ -34,10 +34,11 @@ public class SecurityConfig {
                         // Rotas públicas que não exigem autenticação
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/registrar/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/denuncias").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/profissionais/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/denuncias/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/contatos/**").permitAll()
-                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/**").authenticated()
                         // Qualquer outra rota precisa de autenticação
                         .anyRequest().authenticated()
                 )
