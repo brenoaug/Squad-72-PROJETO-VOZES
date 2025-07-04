@@ -64,7 +64,7 @@ public class UsuarioController {
 
     @GetMapping("/profissionais")
     public ResponseEntity<Page<ProfissionalResponseDTO>> listarTodosProfissionais(
-            @PageableDefault(sort = {"id"}) Pageable paginacao) {
+            @PageableDefault(size = 9, sort = {"id"}) Pageable paginacao) {
         Page<ProfissionalResponseDTO> profissionaisDTOPage = usuarioService.listarTodosProfissionais(paginacao);
         return ResponseEntity.ok(profissionaisDTOPage);
     }

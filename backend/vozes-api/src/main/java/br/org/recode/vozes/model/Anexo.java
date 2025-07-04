@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Anexo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idAnexo;
+    private Long idAnexo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

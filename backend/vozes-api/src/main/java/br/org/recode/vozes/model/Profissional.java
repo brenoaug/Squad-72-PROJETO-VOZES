@@ -24,11 +24,6 @@ public class Profissional extends Usuario {
     @Column(name = "tipo_profissional")
     private TipoProfissional tipoProfissional;
 
-    /**
-     * CONSTRUTOR ADICIONADO:
-     * Recebe o DTO e preenche os campos da superclasse (Usuario)
-     * e os campos desta classe (Profissional).
-     */
     public Profissional(ProfissionalRequestDTO data) {
         // Campos da superclasse Usuario
         this.setNome(data.nome());
@@ -36,8 +31,6 @@ public class Profissional extends Usuario {
         this.setSenha(data.senha());
         this.setTelefone(data.telefone());
         this.setLocalizacao(data.localizacao());
-
-        // Campo específico da classe Profissional
         this.setTipoProfissional(data.tipoProfissional());
     }
 }

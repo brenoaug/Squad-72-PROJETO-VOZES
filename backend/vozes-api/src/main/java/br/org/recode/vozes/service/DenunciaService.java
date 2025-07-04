@@ -1,10 +1,13 @@
 package br.org.recode.vozes.service;
 
 import br.org.recode.vozes.DTO.DenunciaRequestDTO;
+import br.org.recode.vozes.DTO.DenunciaResponseDTO;
 import br.org.recode.vozes.model.Anexo;
 import br.org.recode.vozes.model.Denuncia;
 import br.org.recode.vozes.repository.DenunciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,5 +41,10 @@ public class DenunciaService {
             novaDenuncia.setAnexos(listaAnexos);
         }
         return denunciaRepository.save(novaDenuncia);
+    }
+
+    public Page<DenunciaResponseDTO> listarTodas(Pageable paginacao){
+        Page<Denuncia> denunciasPage = denunciaRepository.findAll(paginacao);
+        return denunciasPage.map(DenunciaResponseDTO::new);
     }
 }
