@@ -1,62 +1,65 @@
 package br.org.recode.vozes.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
-@Configuration // Indica que esta é uma classe de configuração
-@EnableWebSecurity // Habilita a segurança web do Spring
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    // Bean para a configuração de CORS Global
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**") // Aplica a todas as rotas em /api
-                        .allowedOrigins("*") // Permite o front-end React/Vite("http://localhost:3000", "http://localhost:5173")
-                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(false);
-            }
-        };
-    }
+    @Autowired
+    private SecurityFilter securityFilter;
 
-    // Bean principal que configura a cadeia de filtros de segurança
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // Aplica a configuração de CORS definida no bean 'corsConfigurer'
-                .cors(withDefaults())
-                // Desabilita o CSRF, pois não usaremos sessões/cookies para autenticação da API
-                .csrf(csrf -> csrf.disable())
-                // Define a política de sessão como STATELESS, ideal para APIs REST
+        return http
+                // Desabilita o CSRF, pois nossa API é stateless e usa tokens JWT
+                .csrf(AbstractHttpConfigurer::disable)
+                // Configura a sessão para ser stateless, não guardando estado no servidor
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Define as regras de autorização para os endpoints
+                // Configura as regras de autorização para cada endpoint
                 .authorizeHttpRequests(authorize -> authorize
-                        // Por enquanto, vamos permitir acesso a TODOS os endpoints sem autenticação.
-                        // Isso resolve o problema imediato e nos dá uma base para adicionar segurança depois.
-                        .anyRequest().permitAll()
-                );
-
-        return http.build();
+                        // Rotas públicas que não exigem autenticação
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/registrar/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/profissionais/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/denuncias/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contatos/**").permitAll()
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                        // Qualquer outra rota precisa de autenticação
+                        .anyRequest().authenticated()
+                )
+                // Adiciona nosso filtro JWT para ser executado antes do filtro padrão do Spring
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
+    /**
+     * Expõe o AuthenticationManager do Spring como um Bean.
+     * O AuthController usará isso para processar a tentativa de login.
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
+     * Expõe o PasswordEncoder como um Bean para criptografar senhas.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Estamos dizendo ao Spring: "Sempre que alguém pedir um PasswordEncoder,
-        // entregue esta instância do BCryptPasswordEncoder".
         return new BCryptPasswordEncoder();
     }
 }

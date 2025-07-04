@@ -8,6 +8,7 @@ import br.org.recode.vozes.model.Profissional;
 import br.org.recode.vozes.model.Usuario;
 import br.org.recode.vozes.model.UsuarioComum;
 import br.org.recode.vozes.repository.UsuarioRepository;
+import br.org.recode.vozes.model.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,7 @@ public class UsuarioService {
         novoUsuario.setSenha(passwordEncoder.encode(data.senha())); // Agora funciona
         novoUsuario.setTelefone(data.telefone());
         novoUsuario.setLocalizacao(data.localizacao());
+        novoUsuario.setRole(Role.USUARIO);
         return usuarioRepository.save(novoUsuario);
     }
 
@@ -54,6 +56,7 @@ public class UsuarioService {
         novoProfissional.setTelefone(data.telefone());
         novoProfissional.setLocalizacao(data.localizacao());
         novoProfissional.setTipoProfissional(data.tipoProfissional());
+        novoProfissional.setRole(Role.PROFISSIONAL);
         return usuarioRepository.save(novoProfissional);
     }
 
