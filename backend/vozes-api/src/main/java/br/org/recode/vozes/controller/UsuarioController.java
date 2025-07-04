@@ -2,49 +2,38 @@ package br.org.recode.vozes.controller;
 
 import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
 import br.org.recode.vozes.DTO.ProfissionalResponseDTO;
-import br.org.recode.vozes.DTO.UsuarioComumRequestDTO;
 import br.org.recode.vozes.DTO.UsuarioResponseDTO;
-import br.org.recode.vozes.model.Profissional;
-import br.org.recode.vozes.model.Usuario;
+import br.org.recode.vozes.model.enums.TipoProfissional;
 import br.org.recode.vozes.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    // ENDPOINT PARA CRIAR USUÁRIO COMUM
-    @PostMapping
-    public ResponseEntity<?> criarUsuarioComum(@RequestBody UsuarioComumRequestDTO data) {
-        try {
-            Usuario usuarioSalvo = usuarioService.criarUsuarioComum(data);
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+    // --- Endpoints para TODOS OS USUÁRIOS (geralmente para ADMINS) ---
 
-    // ENDPOINT GET ALL (PAGINADO)
     @GetMapping
-    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodosUsuarios(
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        Page<UsuarioResponseDTO> paginaDeUsuarios = usuarioService.listarTodosUsuarios(paginacao);
-        return ResponseEntity.ok(paginaDeUsuarios);
+        Page<UsuarioResponseDTO> pagina = usuarioService.listarTodosUsuarios(paginacao);
+        return ResponseEntity.ok(pagina);
     }
 
-    // ENDPOINT GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         try {
             UsuarioResponseDTO usuarioDTO = usuarioService.buscarUsuarioPorId(id);
             return ResponseEntity.ok(usuarioDTO);
@@ -53,20 +42,14 @@ public class UsuarioController {
         }
     }
 
-    // --- Endpoints Refatorados ---
-
-    @PostMapping("/profissionais")
-    public ResponseEntity<Profissional> criarProfissional(@RequestBody ProfissionalRequestDTO data) {
-        // MUDANÇA 4: Delegando a criação para o Service e retornando 201 Created
-        Profissional profissionalSalvo = usuarioService.criarProfissional(data);
-        return ResponseEntity.status(HttpStatus.CREATED).body(profissionalSalvo);
-    }
+    // --- Endpoints ESPECÍFICOS PARA PROFISSIONAIS ---
 
     @GetMapping("/profissionais")
-    public ResponseEntity<Page<ProfissionalResponseDTO>> listarTodosProfissionais(
-            @PageableDefault(size = 9, sort = {"id"}) Pageable paginacao) {
-        Page<ProfissionalResponseDTO> profissionaisDTOPage = usuarioService.listarTodosProfissionais(paginacao);
-        return ResponseEntity.ok(profissionaisDTOPage);
+    public ResponseEntity<Page<ProfissionalResponseDTO>> listarProfissionais(
+            @PageableDefault(size = 9, sort = {"nome"}) Pageable paginacao,
+            @RequestParam(required = false) TipoProfissional tipo) {
+        Page<ProfissionalResponseDTO> pagina = usuarioService.listarTodosProfissionais(paginacao, tipo);
+        return ResponseEntity.ok(pagina);
     }
 
     @GetMapping("/profissionais/{id}")
@@ -80,9 +63,11 @@ public class UsuarioController {
     }
 
     @PutMapping("/profissionais/{id}")
-    public ResponseEntity<?> atualizarProfissional(@PathVariable Long id, @RequestBody ProfissionalRequestDTO data) {
+    public ResponseEntity<ProfissionalResponseDTO> atualizarProfissional(
+            @PathVariable Long id,
+            @RequestBody @Valid ProfissionalRequestDTO data) {
         try {
-            Profissional profissionalAtualizado = usuarioService.atualizarProfissional(id, data);
+            ProfissionalResponseDTO profissionalAtualizado = usuarioService.atualizarProfissional(id, data);
             return ResponseEntity.ok(profissionalAtualizado);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -90,24 +75,27 @@ public class UsuarioController {
     }
 
     @PatchMapping("/profissionais/{id}")
-    public ResponseEntity<?> atualizarParcialProfissional(@PathVariable Long id, @RequestBody ProfissionalRequestDTO data) {
+    public ResponseEntity<ProfissionalResponseDTO> atualizarParcialProfissional(
+            @PathVariable Long id,
+            @RequestBody @Valid ProfissionalRequestDTO data) {
         try {
-            Profissional profissionalAtualizado = usuarioService.atualizarParcialProfissional(id, data);
+            ProfissionalResponseDTO profissionalAtualizado = usuarioService.atualizarParcialProfissional(id, data);
             return ResponseEntity.ok(profissionalAtualizado);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
+    // --- Endpoint de DELEÇÃO (genérico, mas protegido por permissão no service) ---
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removerUsuario(@PathVariable Long id) {
         try {
-            // MUDANÇA 5: Delegando a remoção para o Service
             usuarioService.removerUsuario(id);
-            // Retorna 204 No Content, o padrão para um DELETE bem-sucedido
             return ResponseEntity.noContent().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (RuntimeException e) {
-            // Se o service lançou a exceção de "não encontrado"
             return ResponseEntity.notFound().build();
         }
     }
