@@ -43,6 +43,7 @@ public class DenunciaService {
         return denunciaRepository.save(novaDenuncia);
     }
 
+    @Transactional
     public Page<DenunciaResponseDTO> listarTodas(Pageable paginacao){
         Page<Denuncia> denunciasPage = denunciaRepository.findAll(paginacao);
         return denunciasPage.map(DenunciaResponseDTO::new);
