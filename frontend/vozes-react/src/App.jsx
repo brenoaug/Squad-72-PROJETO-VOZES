@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home";
 import Denunciar from "./pages/Denunciar";
@@ -15,19 +16,21 @@ import Profissionais from "./pages/Profissionais";
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/denunciar" element={<Denunciar />} />
-        <Route path="/contato" element={<Contato />} />
-        <Route path="/sobre" element={<Sobre />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/criar-conta" element={<CriarConta />} />
-        <Route path="/minha-conta" element={<MinhaConta />} />
-        <Route path="/suporte-acompanhamento" element={<Profissionais />} />
-      </Routes>
-      <ButtonUpLight />
-      <Footer />
+      <AuthProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/denunciar" element={<Denunciar />} />
+          <Route path="/contato" element={<Contato />} />
+          <Route path="/sobre" element={<Sobre />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/criar-conta" element={<CriarConta />} />
+          <Route path="/minha-conta" element={<MinhaConta />} />
+          <Route path="/suporte-acompanhamento" element={<Profissionais />} />
+        </Routes>
+        <ButtonUpLight />
+        <Footer />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
