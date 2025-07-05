@@ -1,4 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/Routes/PrivateRoute"; 
+// Importando o PrivateRoute para proteger as rotas que precisam de autenticação
+
+// Importando as páginas e componentes necessários
 import Header from "./components/Header/Header";
 import Home from "./pages/Home";
 import Denunciar from "./pages/Denunciar";
@@ -11,25 +16,28 @@ import "./App.css";
 import CriarConta from "./pages/CriarConta";
 import MinhaConta from "./pages/MinhaConta";
 import Profissionais from "./pages/Profissionais";
-import VoluntarioCadastro from "./pages/VoluntarioCadastro";
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/denunciar" element={<Denunciar />} />
-        <Route path="/contato" element={<Contato />} />
-        <Route path="/sobre" element={<Sobre />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/criar-conta" element={<CriarConta />} />
-        <Route path="/minha-conta" element={<MinhaConta />} />
-        <Route path="/suporte-acompanhamento" element={<Profissionais />} />
-        <Route path="/seja-voluntario" element={<VoluntarioCadastro />} />
-      </Routes>
-      <ButtonUpLight />
-      <Footer />
+      <AuthProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/denunciar" element={<Denunciar />} />
+          <Route path="/contato" element={<Contato />} />
+          <Route path="/sobre" element={<Sobre />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/criar-conta" element={<CriarConta />} />
+          <Route path="/suporte-acompanhamento" element={<Profissionais />} />
+          <Route element={<PrivateRoute />}>
+            {/* Protegendo as rotas que precisam de autenticação */}
+            <Route path="/minha-conta" element={<MinhaConta />} />
+          </Route>
+        </Routes>
+        <ButtonUpLight />
+        <Footer />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

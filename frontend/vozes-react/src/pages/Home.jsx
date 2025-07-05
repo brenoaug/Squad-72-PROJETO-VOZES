@@ -1,4 +1,5 @@
 import { Container, Card, Button, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import lgbtFlag from "../assets/lgbt-flag-circle.svg";
 import transFlag from "../assets/trans-flag-icon.svg";
@@ -56,7 +57,7 @@ function Home() {
                   Sua denúncia pode ajudar a promover mudanças e ampliar a
                   visibilidade dos problemas enfrentados pela comunidade.
                 </Card.Text>
-                <Button variant={`${dark ? "light" : "primary"}`}>
+                <Button variant={dark ? "light" : "primary"} as={Link} to="/denunciar">
                   Faça Sua Denúncia
                 </Button>
               </Card.Body>
