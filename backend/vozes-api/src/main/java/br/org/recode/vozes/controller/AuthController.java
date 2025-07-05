@@ -1,14 +1,12 @@
 package br.org.recode.vozes.controller;
 
-import br.org.recode.vozes.DTO.LoginRequestDTO;
-import br.org.recode.vozes.DTO.LoginResponseDTO;
-import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
-import br.org.recode.vozes.DTO.UsuarioComumRequestDTO;
+import br.org.recode.vozes.DTO.*;
 import br.org.recode.vozes.model.Usuario;
 import br.org.recode.vozes.service.TokenService;
 import br.org.recode.vozes.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,10 +34,19 @@ public class AuthController {
         try {
             var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
             var authentication = this.authenticationManager.authenticate(authenticationToken);
-            var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
-            return ResponseEntity.ok(new LoginResponseDTO(tokenJWT));
+            var usuarioAutenticado = (Usuario) authentication.getPrincipal();
+
+            // Gera o token como antes
+            var tokenJWT = tokenService.gerarToken(usuarioAutenticado);
+
+            // Cria um DTO de resposta do usuário
+            var usuarioResponseDTO = new UsuarioResponseDTO(usuarioAutenticado);
+
+            // Cria e retorna o DTO de login final com o token E os dados do usuário
+            return ResponseEntity.ok(new LoginResponseDTO(tokenJWT, usuarioResponseDTO));
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Falha na autenticação: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos.");
         }
     }
 

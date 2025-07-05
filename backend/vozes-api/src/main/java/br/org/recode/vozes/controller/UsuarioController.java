@@ -1,8 +1,8 @@
 package br.org.recode.vozes.controller;
 
-import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
 import br.org.recode.vozes.DTO.ProfissionalResponseDTO;
 import br.org.recode.vozes.DTO.UsuarioResponseDTO;
+import br.org.recode.vozes.DTO.UsuarioUpdateRequestDTO;
 import br.org.recode.vozes.model.enums.TipoProfissional;
 import br.org.recode.vozes.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -23,17 +22,24 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // --- Endpoints para TODOS OS USUÁRIOS (geralmente para ADMINS) ---
+    // --- ENDPOINTS DE LEITURA (GERAIS) ---
 
+    /**
+     * Lista todos os usuários (Comuns e Profissionais) de forma paginada.
+     * Ideal para uma área de administração.
+     */
     @GetMapping
-    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodosUsuarios(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page<UsuarioResponseDTO> pagina = usuarioService.listarTodosUsuarios(paginacao);
         return ResponseEntity.ok(pagina);
     }
 
+    /**
+     * Busca um usuário específico pelo ID, seja ele comum ou profissional.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorId(@PathVariable Long id) {
         try {
             UsuarioResponseDTO usuarioDTO = usuarioService.buscarUsuarioPorId(id);
             return ResponseEntity.ok(usuarioDTO);
@@ -42,8 +48,12 @@ public class UsuarioController {
         }
     }
 
-    // --- Endpoints ESPECÍFICOS PARA PROFISSIONAIS ---
+    // --- ENDPOINTS ESPECÍFICOS PARA PROFISSIONAIS (PARA PÁGINA PÚBLICA) ---
 
+    /**
+     * Lista apenas os profissionais, com opção de filtro por tipo.
+     * Ideal para a página pública de "Suporte & Acompanhamento".
+     */
     @GetMapping("/profissionais")
     public ResponseEntity<Page<ProfissionalResponseDTO>> listarProfissionais(
             @PageableDefault(size = 9, sort = {"nome"}) Pageable paginacao,
@@ -62,32 +72,30 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/profissionais/{id}")
-    public ResponseEntity<ProfissionalResponseDTO> atualizarProfissional(
-            @PathVariable Long id,
-            @RequestBody @Valid ProfissionalRequestDTO data) {
+    // --- ENDPOINT DE ATUALIZAÇÃO (GENÉRICO) ---
+
+    /**
+     * Atualiza parcialmente os dados de qualquer usuário (comum ou profissional).
+     * A lógica de permissão (se é admin ou dono da conta) está no Service.
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarParcialUsuario(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateRequestDTO data) {
         try {
-            ProfissionalResponseDTO profissionalAtualizado = usuarioService.atualizarProfissional(id, data);
-            return ResponseEntity.ok(profissionalAtualizado);
+            UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarParcialUsuario(id, data);
+            return ResponseEntity.ok(usuarioAtualizado);
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PatchMapping("/profissionais/{id}")
-    public ResponseEntity<ProfissionalResponseDTO> atualizarParcialProfissional(
-            @PathVariable Long id,
-            @RequestBody @Valid ProfissionalRequestDTO data) {
-        try {
-            ProfissionalResponseDTO profissionalAtualizado = usuarioService.atualizarParcialProfissional(id, data);
-            return ResponseEntity.ok(profissionalAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // --- ENDPOINT DE DELEÇÃO (GENÉRICO) ---
 
-    // --- Endpoint de DELEÇÃO (genérico, mas protegido por permissão no service) ---
-
+    /**
+     * Remove um usuário (comum ou profissional).
+     * A lógica de permissão (se é admin ou dono da conta) está no Service.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removerUsuario(@PathVariable Long id) {
         try {

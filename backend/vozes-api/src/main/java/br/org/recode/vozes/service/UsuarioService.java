@@ -1,9 +1,6 @@
 package br.org.recode.vozes.service;
 
-import br.org.recode.vozes.DTO.ProfissionalRequestDTO;
-import br.org.recode.vozes.DTO.ProfissionalResponseDTO;
-import br.org.recode.vozes.DTO.UsuarioComumRequestDTO;
-import br.org.recode.vozes.DTO.UsuarioResponseDTO;
+import br.org.recode.vozes.DTO.*;
 import br.org.recode.vozes.model.Profissional;
 import br.org.recode.vozes.model.Usuario;
 import br.org.recode.vozes.model.UsuarioComum;
@@ -86,46 +83,43 @@ public class UsuarioService {
     // --- MÉTODOS DE ATUALIZAÇÃO (PUT/PATCH) PARA PROFISSIONAIS ---
 
     @Transactional
-    public ProfissionalResponseDTO atualizarProfissional(Long id, ProfissionalRequestDTO data) {
-        // REFINAMENTO: Regra de permissão agora é explícita e clara
+    public UsuarioResponseDTO atualizarParcialUsuario(Long id, UsuarioUpdateRequestDTO data) {
         Usuario usuarioLogado = getUsuarioLogado();
-        if (usuarioLogado.getRole() != Role.ADMIN) {
-            throw new AccessDeniedException("Apenas administradores podem realizar uma atualização completa.");
+
+        // Busca o usuário que será modificado
+        Usuario usuarioParaAtualizar = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id));
+
+        // Lógica de permissão: só o dono da conta ou um admin podem alterar
+        if (!usuarioLogado.getId().equals(usuarioParaAtualizar.getId()) && usuarioLogado.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Permissão negada para alterar este usuário.");
         }
 
-        Profissional profissionalExistente = findProfissionalById(id); // Usa nosso novo método auxiliar
-
-        profissionalExistente.setNome(data.nome());
-        profissionalExistente.setEmail(data.email());
-        profissionalExistente.setTelefone(data.telefone());
-        profissionalExistente.setLocalizacao(data.localizacao());
-        profissionalExistente.setTipoProfissional(data.tipoProfissional());
-
-        Profissional salvo = usuarioRepository.save(profissionalExistente);
-        return new ProfissionalResponseDTO(salvo);
-    }
-
-    @Transactional
-    public ProfissionalResponseDTO atualizarParcialProfissional(Long id, ProfissionalRequestDTO data) {
-        Profissional profissionalExistente = findProfissionalById(id); // Usa nosso novo método auxiliar
-
-        // REFINAMENTO: Lógica de permissão centralizada
-        verificaPermissaoAdminOuDono(id);
-
-        if (data.nome() != null) profissionalExistente.setNome(data.nome());
+        // --- Lógica de atualização parcial ---
+        if (data.nome() != null) {
+            usuarioParaAtualizar.setNome(data.nome());
+        }
         if (data.email() != null) {
-            if (getUsuarioLogado().getRole() == Role.ADMIN) {
-                profissionalExistente.setEmail(data.email());
+            if (usuarioLogado.getRole() == Role.ADMIN) {
+                usuarioParaAtualizar.setEmail(data.email());
             } else {
-                throw new AccessDeniedException("Usuários não podem alterar o próprio e-mail.");
+                throw new AccessDeniedException("Apenas administradores podem alterar o e-mail.");
             }
         }
-        if (data.telefone() != null) profissionalExistente.setTelefone(data.telefone());
-        if (data.localizacao() != null) profissionalExistente.setLocalizacao(data.localizacao());
-        if (data.tipoProfissional() != null) profissionalExistente.setTipoProfissional(data.tipoProfissional());
+        if (data.telefone() != null) {
+            usuarioParaAtualizar.setTelefone(data.telefone());
+        }
+        if (data.localizacao() != null) {
+            usuarioParaAtualizar.setLocalizacao(data.localizacao());
+        }
 
-        Profissional salvo = usuarioRepository.save(profissionalExistente);
-        return new ProfissionalResponseDTO(salvo);
+        // Se o usuário for um profissional E se o DTO enviou um tipo de profissional
+        if (usuarioParaAtualizar instanceof Profissional profissional && data.tipoProfissional() != null) {
+            profissional.setTipoProfissional(data.tipoProfissional());
+        }
+
+        Usuario salvo = usuarioRepository.save(usuarioParaAtualizar);
+        return new UsuarioResponseDTO(salvo);
     }
 
     // --- MÉTODO DE DELEÇÃO (GENÉRICO) ---
