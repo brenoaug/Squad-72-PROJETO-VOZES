@@ -27,14 +27,13 @@ function Profissionais() {
 
   useEffect(() => {
     api
-      .get(`/profissionais?page=${paginaAtual}&size=9`)
+      .get(`/usuarios/profissionais?page=${paginaAtual}&size=9`)
       .then((response) => {
-        console.log("Dados recebidos:", response.data);
         setProfissionais(response.data.content);
         setTotalPaginas(response.data.totalPages);
       })
       .catch((error) => console.error("Erro na requisição:", error));
-  }, [paginaAtual]);
+  }, [paginaAtual]); // Roda novamente sempre que a 'paginaAtual' mudar
 
   const handlePageChange = (pageNumber) => {
     setPaginaAtual(pageNumber);
@@ -119,21 +118,14 @@ function Profissionais() {
           </Row>
           <Row className="w-100 justify-content-center mt-4">
             <Col xs="auto">
-              <Pagination className={`${
-        dark ? "bg-dark text-light" : "bg-light text-dark"
-      }`}>
-                <Pagination.First
-                  onClick={() => handlePageChange(0)}
-                  disabled={paginaAtual === 0}
-                />
-                <Pagination.Prev
-                  onClick={() => handlePageChange(paginaAtual - 1)}
-                  disabled={paginaAtual === 0}
-                />
-
-                {[...Array(totalPaginas).keys()].map((page) => (
-                  <Pagination.Item
-                    key={page}
+              <Pagination>
+                <Pagination.First onClick={() => handlePageChange(0)} disabled={paginaAtual === 0} />
+                <Pagination.Prev onClick={() => handlePageChange(paginaAtual - 1)} disabled={paginaAtual === 0} />
+                
+                {/* Lógica para mostrar os números de página */}
+                {[...Array(totalPaginas).keys()].map(page => (
+                  <Pagination.Item 
+                    key={page} 
                     active={page === paginaAtual}
                     onClick={() => handlePageChange(page)}
                   >
@@ -141,14 +133,8 @@ function Profissionais() {
                   </Pagination.Item>
                 ))}
 
-                <Pagination.Next
-                  onClick={() => handlePageChange(paginaAtual + 1)}
-                  disabled={paginaAtual >= totalPaginas - 1}
-                />
-                <Pagination.Last
-                  onClick={() => handlePageChange(totalPaginas - 1)}
-                  disabled={paginaAtual >= totalPaginas - 1}
-                />
+                <Pagination.Next onClick={() => handlePageChange(paginaAtual + 1)} disabled={paginaAtual >= totalPaginas - 1} />
+                <Pagination.Last onClick={() => handlePageChange(totalPaginas - 1)} disabled={paginaAtual >= totalPaginas - 1} />
               </Pagination>
             </Col>
           </Row>

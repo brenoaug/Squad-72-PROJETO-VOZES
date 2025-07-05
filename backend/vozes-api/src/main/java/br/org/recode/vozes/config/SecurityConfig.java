@@ -42,7 +42,7 @@ public class SecurityConfig {
 
                         // Rotas públicas que não exigem autenticação
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/profissionais/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/profissionais/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/denuncias/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/denuncias").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/contatos/**").permitAll()

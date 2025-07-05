@@ -65,7 +65,10 @@ public class UsuarioService {
     }
 
     public Page<ProfissionalResponseDTO> listarTodosProfissionais(Pageable paginacao, TipoProfissional tipo) {
+        long startTime = System.currentTimeMillis();
         Page<Profissional> profissionaisPage = usuarioRepository.findAllProfissionais(paginacao, tipo);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Tempo da consulta findAllProfissionais: " + (endTime - startTime) + "ms");
         return profissionaisPage.map(ProfissionalResponseDTO::new);
     }
 
