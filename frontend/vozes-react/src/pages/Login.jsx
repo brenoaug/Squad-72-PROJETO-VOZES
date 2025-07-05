@@ -64,10 +64,10 @@ function Login() {
                 />
               </div>
               <div className="d-flex justify-content-center p-1 gap-2">
-                <Button variant={dark ? "light" : "secondary"} as={Link} to="/criarconta">
-                  Criar
+                <Button variant={dark ? "light" : "secondary"} as={Link} to="/criar-conta">
+                  Criar Conta
                 </Button>
-                <Button variant={dark ? "light" : "primary"} type="submit">
+                <Button variant="primary" type="submit">
                   Entrar
                 </Button>
               </div>
