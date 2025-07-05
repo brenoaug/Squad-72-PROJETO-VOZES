@@ -48,12 +48,6 @@ function MinhaConta() {
             <Tab eventKey="Meu Perfil" title="Meu Perfil">
               Tab content for Home
             </Tab>
-            <Tab eventKey="Meus Dados" title="Meus Dados">
-              Tab content for Profile
-            </Tab>
-            <Tab eventKey="Meus Favoritos" title="Meus Favoritos">
-              Tab content for Contact
-            </Tab>
           </Tabs>
         </Card>
       </Container>

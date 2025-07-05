@@ -50,6 +50,18 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+    async function registrar(dadosDoFormulario) {
+    try {
+      
+      await api.post('/auth/registrar/comum', dadosDoFormulario);
+      // Você pode adicionar lógicas aqui, como fazer login automaticamente após o registro
+    } catch (error) {
+      console.error("Erro no registro:", error);
+      // Pega a mensagem de erro do back-end, se houver
+      throw new Error(error.response?.data || "Não foi possível criar a conta.");
+    }
+  }
+
   function logout() {
     // Limpa o localStorage
     localStorage.removeItem('@Vozes:token');
@@ -61,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   // O valor do Provedor que será disponibilizado para os componentes filhos
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!user, user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, token, loading, login, logout, registrar }}>
       {children}
     </AuthContext.Provider>
   );
