@@ -39,6 +39,18 @@ function Profissionais() {
     setPaginaAtual(pageNumber);
   };
 
+  // Função para formatar o telefone no padrão (00) 00000-0000
+  function formatTelefone(telefone) {
+    if (!telefone) return "";
+    // Remove tudo que não for dígito
+    const cleaned = telefone.replace(/\D/g, "");
+    // Aplica a máscara
+    return cleaned.replace(
+      /^(\d{2})(\d{5})(\d{4}).*$/,
+      "($1) $2-$3"
+    );
+  }
+
   return (
     <main
       className={`text-center text-lg-start pt-5 pb-5 ${
@@ -102,13 +114,13 @@ function Profissionais() {
                   <Card.Body>
                     <Card.Title>{profissional.nome}</Card.Title>
                     <Card.Text className="gap-2">
-                      <i className="bi bi-geo-alt-fill"></i>
+                      <i className="bi bi-geo-alt-fill me-2"></i>
                       {profissional.localizacao}
                       <br />
-                      <i className="bi bi-telephone-fill"></i>
-                      {profissional.telefone}
+                      <i className="bi bi-telephone-fill me-2"></i>
+                      {formatTelefone(profissional.telefone)}
                       <br />
-                      <i className="bi bi-envelope-fill"></i>
+                      <i className="bi bi-envelope-fill me-2"></i>
                       {profissional.email}
                     </Card.Text>
                   </Card.Body>

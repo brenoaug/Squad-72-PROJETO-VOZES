@@ -16,6 +16,8 @@ import "./App.css";
 import CriarConta from "./pages/CriarConta";
 import MinhaConta from "./pages/MinhaConta";
 import Profissionais from "./pages/Profissionais";
+import PaginaAdmin from "./pages/PaginaAdmin";
+import PaginaDaConta from "./pages/PaginaDaConta"; // Importando a página de conta do usuário
 
 function App() {
   return (
@@ -30,9 +32,12 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/criar-conta" element={<CriarConta />} />
           <Route path="/suporte-acompanhamento" element={<Profissionais />} />
+          <Route path="/conta-admin" element={<PaginaAdmin />} />
           <Route element={<PrivateRoute />}>
             {/* Protegendo as rotas que precisam de autenticação */}
-            <Route path="/minha-conta" element={<MinhaConta />} />
+            {/* Protegendo a rota de minha conta, substituindo MinhaConta por PaginaDaConta */}
+            {/* <Route path="/minha-conta" element={<MinhaConta />} /> */}
+            <Route path="/minha-conta" element={<PaginaDaConta />} />
           </Route>
         </Routes>
         <ButtonUpLight />
