@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
+  Card,
   Tabs,
   Tab,
   Table,
@@ -20,38 +21,26 @@ import api from "../services/api";
 import "../style/PaginaAdmin.css";
 
 function PaginaAdmin() {
+  const { user, updateUser, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // --- ESTADOS GERAIS ---
   const [dark, setDark] = useState(
     document.body.classList.contains("dark-theme")
   );
-  const { user, updateUser } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setDark(document.body.classList.contains("dark-theme"));
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  // --- ESTADOS GERAIS ---
   const [activeTab, setActiveTab] = useState("minhaConta");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // --- ESTADOS PARA A ABA "MINHA CONTA" (ADMIN) ---
+  // --- ESTADOS PARA "MINHA CONTA" ---
   const [isEditingAdmin, setIsEditingAdmin] = useState(false);
   const [adminFormData, setAdminFormData] = useState({
     nome: "",
-    email: "",
     telefone: "",
     localizacao: "",
   });
 
-  // --- ESTADOS PARA A ABA "GERENCIAR USUÁRIOS" ---
+  // --- ESTADOS PARA "GERENCIAR USUÁRIOS" ---
   const [users, setUsers] = useState([]);
   const [usersPageInfo, setUsersPageInfo] = useState({
     currentPage: 0,
@@ -61,13 +50,23 @@ function PaginaAdmin() {
   const [userToEdit, setUserToEdit] = useState(null);
   const [editUserFormData, setEditUserFormData] = useState({});
 
-  // --- ESTADOS PARA A ABA "GERENCIAR DENÚNCIAS" ---
+  // --- ESTADOS PARA "GERENCIAR DENÚNCIAS" ---
   const [denuncias, setDenuncias] = useState([]);
   const [denunciasPageInfo, setDenunciasPageInfo] = useState({
     currentPage: 0,
     totalPages: 0,
   });
   const [denunciaToDelete, setDenunciaToDelete] = useState(null);
+  const [denunciaToEdit, setDenunciaToEdit] = useState(null);
+  const [editDenunciaFormData, setEditDenunciaFormData] = useState({});
+
+  // --- ESTADOS PARA "GERENCIAR CONTATOS" ---
+  const [contatos, setContatos] = useState([]);
+  const [contatosPageInfo, setContatosPageInfo] = useState({
+    currentPage: 0,
+    totalPages: 0,
+  });
+  const [contatoToView, setContatoToView] = useState(null);
 
   // --- FUNÇÕES DE BUSCA DE DADOS (FETCH) ---
   const fetchUsers = async (page) => {
@@ -75,12 +74,13 @@ function PaginaAdmin() {
       const response = await api.get(
         `/usuarios?page=${page}&size=15&sort=nome`
       );
-      setUsers(response.data.content);
+      setUsers(response.data.content || []);
       setUsersPageInfo({
         currentPage: page,
-        totalPages: response.data.totalPages,
+        totalPages: response.data.totalPages || 0,
       });
     } catch (err) {
+      console.error("Erro ao carregar usuários:", err);
       setError("Falha ao carregar usuários.");
     }
   };
@@ -88,53 +88,133 @@ function PaginaAdmin() {
   const fetchDenuncias = async (page) => {
     try {
       const response = await api.get(
-        `/denuncias?page=${page}&size=15&sort=data,desc`
+        `/denuncias?page=${page}&size=15&sort=id,desc`
       );
-      setDenuncias(response.data.content);
+      setDenuncias(response.data.content || []);
       setDenunciasPageInfo({
         currentPage: page,
-        totalPages: response.data.totalPages,
+        totalPages: response.data.totalPages || 0,
       });
     } catch (err) {
+      console.error("Erro ao carregar denúncias:", err);
       setError("Falha ao carregar denúncias.");
     }
   };
 
+  // CORREÇÃO PRINCIPAL: Função fetchContatos adaptada para a estrutura real da API
+  const fetchContatos = async (page) => {
+    try {
+      console.log(`🔍 Buscando contatos - página: ${page}`);
+      const response = await api.get(
+        `/contatos?page=${page}&size=15&sort=idContato,desc`
+      );
+      console.log("📦 Resposta da API contatos:", response.data);
+      
+      // CORREÇÃO: Verificar se a API retorna array direto ou estrutura paginada
+      if (Array.isArray(response.data)) {
+        // API retorna array direto (caso atual)
+        console.log("✅ API retorna array direto com", response.data.length, "contatos");
+        setContatos(response.data);
+        setContatosPageInfo({
+          currentPage: 0,
+          totalPages: response.data.length > 0 ? 1 : 0,
+        });
+      } else if (response.data && response.data.content) {
+        // API retorna estrutura paginada (caso esperado)
+        console.log("✅ API retorna estrutura paginada");
+        setContatos(response.data.content || []);
+        setContatosPageInfo({
+          currentPage: page,
+          totalPages: response.data.totalPages || 0,
+        });
+      } else {
+        // Estrutura inesperada
+        console.warn("⚠️ Estrutura de resposta inesperada:", response.data);
+        setContatos([]);
+        setContatosPageInfo({
+          currentPage: 0,
+          totalPages: 0,
+        });
+      }
+    } catch (err) {
+      console.error("❌ Erro ao carregar contatos:", err);
+      setError("Falha ao carregar as mensagens de contato.");
+      setContatos([]);
+      setContatosPageInfo({
+        currentPage: 0,
+        totalPages: 0,
+      });
+    }
+  };
+
+  // useEffect principal para carregar dados quando a aba muda
   useEffect(() => {
-    if (user?.role !== "ADMIN") return;
+    if (!user || user.role !== "ADMIN" || loading) return;
+
+    console.log(`🔄 Aba ativa mudou para: ${activeTab}`);
+
+    if (activeTab === "gerenciarUsuarios") {
+      fetchUsers(0);
+    } else if (activeTab === "gerenciarDenuncias") {
+      fetchDenuncias(0);
+    } else if (activeTab === "gerenciarContatos") {
+      fetchContatos(0);
+    }
+  }, [activeTab, user, loading]);
+
+  // useEffects separados para mudanças de página
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN" || loading) return;
     if (activeTab === "gerenciarUsuarios") {
       fetchUsers(usersPageInfo.currentPage);
-    } else if (activeTab === "gerenciarDenuncias") {
+    }
+  }, [usersPageInfo.currentPage]);
+
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN" || loading) return;
+    if (activeTab === "gerenciarDenuncias") {
       fetchDenuncias(denunciasPageInfo.currentPage);
     }
-  }, [
-    activeTab,
-    usersPageInfo.currentPage,
-    denunciasPageInfo.currentPage,
-    user,
-  ]);
+  }, [denunciasPageInfo.currentPage]);
 
-  // Efeito para popular o formulário do admin com os dados atuais do usuário
+  useEffect(() => {
+    if (!user || user.role !== "ADMIN" || loading) return;
+    if (activeTab === "gerenciarContatos") {
+      fetchContatos(contatosPageInfo.currentPage);
+    }
+  }, [contatosPageInfo.currentPage]);
+
+  // Efeito para popular o formulário do admin
   useEffect(() => {
     if (user) {
       setAdminFormData({
         nome: user.nome || "",
-        email: user.email || "",
         telefone: user.telefone || "",
         localizacao: user.localizacao || "",
       });
     }
-    // Aplica a classe do tema escuro ao body se necessário
-    if (dark) {
-      document.body.classList.add("dark-theme");
-    } else {
-      document.body.classList.remove("dark-theme");
-    }
   }, [user]);
 
-  // --- HANDLERS (FUNÇÕES DE AÇÃO) ---
+  // Efeito para o tema escuro
+  useEffect(() => {
+    const observer = new MutationObserver(() =>
+      setDark(document.body.classList.contains("dark-theme"))
+    );
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
-  // Handlers para o formulário do próprio Admin
+  // Efeito de redirecionamento
+  useEffect(() => {
+    if (!loading && (!user || user.role !== "ADMIN")) {
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
+
+  // --- HANDLERS (FUNÇÕES DE AÇÃO) ---
   const handleAdminFormChange = (e) =>
     setAdminFormData({ ...adminFormData, [e.target.name]: e.target.value });
   const handleAdminTelefoneChange = (value) =>
@@ -145,26 +225,24 @@ function PaginaAdmin() {
     setError("");
     setSuccess("");
     try {
-      // Prepara os dados para enviar, excluindo o email (que não pode ser alterado por si mesmo)
-      // e limpando a máscara do telefone.
-      const { email, ...dataToUpdate } = adminFormData;
-      dataToUpdate.telefone = dataToUpdate.telefone.replace(/\D/g, "");
-
+      const dataToUpdate = {
+        nome: adminFormData.nome,
+        telefone: adminFormData.telefone.replace(/\D/g, ""),
+        localizacao: adminFormData.localizacao,
+      };
       const response = await api.patch(`/usuarios/${user.id}`, dataToUpdate);
-      updateUser(response.data); // Atualiza o usuário no contexto global
+      updateUser(response.data);
       setSuccess("Seus dados foram atualizados com sucesso!");
-      setIsEditingAdmin(false); // Volta para o modo de visualização
+      setIsEditingAdmin(false);
     } catch (err) {
       setError("Falha ao atualizar seus dados.");
     }
   };
 
   const handleAdminCancelEdit = () => {
-    // Restaura os dados do formulário para os valores originais do usuário
     if (user) {
       setAdminFormData({
         nome: user.nome || "",
-        email: user.email || "",
         telefone: user.telefone || "",
         localizacao: user.localizacao || "",
       });
@@ -172,7 +250,6 @@ function PaginaAdmin() {
     setIsEditingAdmin(false);
   };
 
-  // Abre o modal de edição de usuário e popula o formulário
   const handleOpenEditModal = (userToEdit) => {
     setUserToEdit(userToEdit);
     setEditUserFormData({
@@ -189,15 +266,19 @@ function PaginaAdmin() {
       ...editUserFormData,
       [e.target.name]: e.target.value,
     });
+  const handleEditUserTelefoneChange = (value) =>
+    setEditUserFormData((prev) => ({ ...prev, telefone: value }));
 
-  // Salva as alterações feitas no modal de edição de usuário
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     try {
-      // Admin usa PATCH para poder alterar qualquer campo, inclusive o email
-      await api.patch(`/usuarios/${userToEdit.id}`, editUserFormData);
+      const dataToUpdate = {
+        ...editUserFormData,
+        telefone: editUserFormData.telefone.replace(/\D/g, ""),
+      };
+      await api.patch(`/usuarios/${userToEdit.id}`, dataToUpdate);
       setUserToEdit(null);
       setSuccess(`Usuário ${userToEdit.nome} atualizado com sucesso.`);
       fetchUsers(usersPageInfo.currentPage);
@@ -219,6 +300,38 @@ function PaginaAdmin() {
     }
   };
 
+  const handleOpenEditDenunciaModal = (denuncia) => {
+    setDenunciaToEdit(denuncia);
+    setEditDenunciaFormData({
+      nome: denuncia.nome || "Anônimo",
+      email: denuncia.email || "Não informado",
+      data: denuncia.data,
+      localIncidente: denuncia.localIncidente,
+      descricao: denuncia.descricao,
+    });
+  };
+
+  const handleEditDenunciaFormChange = (e) => {
+    setEditDenunciaFormData({
+      ...editDenunciaFormData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleUpdateDenuncia = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    try {
+      await api.put(`/denuncias/${denunciaToEdit.id}`, editDenunciaFormData);
+      setDenunciaToEdit(null);
+      setSuccess(`Denúncia #${denunciaToEdit.id} atualizada com sucesso.`);
+      fetchDenuncias(denunciasPageInfo.currentPage);
+    } catch (err) {
+      setError("Falha ao atualizar a denúncia.");
+    }
+  };
+
   const handleDeleteDenuncia = async () => {
     if (!denunciaToDelete) return;
     try {
@@ -232,9 +345,19 @@ function PaginaAdmin() {
     }
   };
 
-  if (!user || user.role !== "ADMIN") {
-    navigate("/");
-    return null;
+  // Handler para mudança de página dos contatos (adaptado para API sem paginação)
+  const handleContatosPageChange = (page) => {
+    console.log(`📄 Tentativa de mudança para página ${page} dos contatos`);
+    // Como a API atual retorna todos os contatos, não há paginação real
+    // Mas mantemos a interface para consistência
+    setContatosPageInfo({
+      ...contatosPageInfo,
+      currentPage: page,
+    });
+  };
+
+  if (loading || !user) {
+    return <div>Verificando permissões...</div>;
   }
 
   return (
@@ -270,9 +393,9 @@ function PaginaAdmin() {
             className="mb-3 admin-tabs"
             fill
           >
-            {/* === ABA 1: MINHA CONTA (ADMIN) === */}
+            {/* ABA 1: MINHA CONTA (ADMIN) */}
             <Tab eventKey="minhaConta" title="Minha Conta">
-              <Container
+              <Card
                 className={`admin-form-container mt-0 p-4 ${
                   dark ? "bg-dark text-light" : "bg-white text-dark"
                 }`}
@@ -284,14 +407,10 @@ function PaginaAdmin() {
                     </Form.Label>
                     <Col sm="9">
                       <Form.Control
-                        className={`ps-3 rounded-3 ${
-                          dark
-                            ? "bg-secondary text-light"
-                            : "bg-white text-dark"
-                        }`}
                         plaintext
                         readOnly
                         value={user.email}
+                        className={dark ? "text-light" : ""}
                       />
                     </Col>
                   </Form.Group>
@@ -309,14 +428,10 @@ function PaginaAdmin() {
                         />
                       ) : (
                         <Form.Control
-                          className={`ps-3 rounded-3 ${
-                            dark
-                              ? "bg-secondary text-light"
-                              : "bg-white text-dark"
-                          }`}
                           plaintext
                           readOnly
-                          defaultValue={user.nome}
+                          value={user.nome}
+                          className={dark ? "text-light" : ""}
                         />
                       )}
                     </Col>
@@ -336,16 +451,10 @@ function PaginaAdmin() {
                         />
                       ) : (
                         <Form.Control
-                          as={IMaskInput}
-                          mask="(00) 00000-0000"
-                          className={`ps-3 rounded-3 ${
-                            dark
-                              ? "bg-secondary text-light"
-                              : "bg-white text-dark"
-                          }`}
                           plaintext
                           readOnly
-                          defaultValue={user.telefone}
+                          value={user.telefone}
+                          className={dark ? "text-light" : ""}
                         />
                       )}
                     </Col>
@@ -366,50 +475,48 @@ function PaginaAdmin() {
                         <Form.Control
                           plaintext
                           readOnly
-                          defaultValue={user.localizacao}
-                          className={`ps-3 rounded-3 ${
-                            dark
-                              ? "bg-secondary text-light"
-                              : "bg-white text-dark"
-                          }`}
+                          value={user.localizacao}
+                          className={dark ? "text-light" : ""}
                         />
                       )}
                     </Col>
                   </Form.Group>
-                  {!isEditingAdmin ? (
-                    <div className="text-end mt-3">
+                  <div className="text-end mt-3">
+                    {isEditingAdmin ? (
+                      <>
+                        <Button
+                          variant="outline-secondary"
+                          className="me-2"
+                          onClick={handleAdminCancelEdit}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button variant="primary" type="submit">
+                          Salvar Alterações
+                        </Button>
+                      </>
+                    ) : (
                       <Button
                         variant="outline-primary"
+                        type="button"
                         onClick={() => setIsEditingAdmin(true)}
                       >
                         Editar Dados
                       </Button>
-                    </div>
-                  ) : (
-                    <div className="text-end mt-3">
-                      <Button
-                        variant="outline-secondary"
-                        className="me-2"
-                        onClick={handleAdminCancelEdit}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button variant="primary" type="submit">
-                        Salvar Alterações
-                      </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </Form>
-              </Container>
+              </Card>
             </Tab>
-            {/* === ABA 2: GERENCIAR USUÁRIOS === */}
+
+            {/* ABA 2: GERENCIAR USUÁRIOS */}
             <Tab eventKey="gerenciarUsuarios" title="Gerenciar Usuários">
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
-                className="admin-table"
+                variant={dark ? "dark" : ""}
               >
                 <thead>
                   <tr>
@@ -458,7 +565,7 @@ function PaginaAdmin() {
                   ))}
                 </tbody>
               </Table>
-              <Pagination className="justify-content-center admin-pagination">
+              <Pagination className="justify-content-center">
                 {[...Array(usersPageInfo.totalPages).keys()].map((page) => (
                   <Pagination.Item
                     key={page}
@@ -472,14 +579,15 @@ function PaginaAdmin() {
                 ))}
               </Pagination>
             </Tab>
-            {/* === ABA 3: GERENCIAR DENÚNCIAS === */}
+
+            {/* ABA 3: GERENCIAR DENÚNCIAS */}
             <Tab eventKey="gerenciarDenuncias" title="Gerenciar Denúncias">
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
-                className="admin-table"
+                variant={dark ? "dark" : ""}
               >
                 <thead>
                   <tr>
@@ -502,11 +610,7 @@ function PaginaAdmin() {
                           variant="outline-primary"
                           size="sm"
                           className="me-2"
-                          onClick={() =>
-                            alert(
-                              "Funcionalidade de Editar denúncia a ser implementada."
-                            )
-                          }
+                          onClick={() => handleOpenEditDenunciaModal(d)}
                         >
                           Ver/Editar
                         </Button>
@@ -522,7 +626,7 @@ function PaginaAdmin() {
                   ))}
                 </tbody>
               </Table>
-              <Pagination className="justify-content-center admin-pagination">
+              <Pagination className="justify-content-center">
                 {[...Array(denunciasPageInfo.totalPages).keys()].map((page) => (
                   <Pagination.Item
                     key={page}
@@ -539,51 +643,85 @@ function PaginaAdmin() {
                 ))}
               </Pagination>
             </Tab>
-            <Tab
-              eventKey="gerenciarContatos"
-              title="Gerenciar Contatos"
-              onEnter={() =>
-                alert(
-                  "Funcionalidade de Gerenciar Contatos ainda não está implementada."
-                )
-              }
-            >
+
+            {/* ABA 4: GERENCIAR CONTATOS - CORRIGIDA PARA ESTRUTURA REAL DA API */}
+            <Tab eventKey="gerenciarContatos" title="Gerenciar Contatos">
+              {/* Debug info para desenvolvimento 
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mb-3 p-2 bg-info text-dark rounded">
+                  <small>
+                    <strong>Debug:</strong> {contatos.length} contatos carregados | 
+                    Página atual: {contatosPageInfo.currentPage} | 
+                    Total de páginas: {contatosPageInfo.totalPages} |
+                    Loading: {loading ? 'true' : 'false'} |
+                    User role: {user?.role}
+                  </small>
+                </div>
+              )}*/}
+              
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
-                className="admin-table"
+                variant={dark ? "dark" : ""}
               >
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Mensagem</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Maria Silva</td>
-                    <td>maria@email.com</td>
-                    <td>Gostaria de saber mais sobre o projeto.</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>João Souza</td>
-                    <td>joao@email.com</td>
-                    <td>Encontrei um problema no site.</td>
-                  </tr>
+                  {contatos.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="text-center">
+                        {loading ? "Carregando contatos..." : "Nenhum contato encontrado"}
+                      </td>
+                    </tr>
+                  ) : (
+                    contatos.map((contato) => (
+                      <tr key={contato.idContato}>
+                        <td>{contato.idContato}</td>
+                        <td>{contato.nome}</td>
+                        <td>{contato.email}</td>
+                        <td>
+                          <Button
+                            variant="outline-info"
+                            size="sm"
+                            onClick={() => setContatoToView(contato)}
+                          >
+                            Visualizar Mensagem
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </Table>
+              
+              {/* Paginação - adaptada para API sem paginação real */}
+              {contatosPageInfo.totalPages > 1 && (
+                <Pagination className="justify-content-center">
+                  {[...Array(contatosPageInfo.totalPages).keys()].map((page) => (
+                    <Pagination.Item
+                      key={page}
+                      active={page === contatosPageInfo.currentPage}
+                      onClick={() => handleContatosPageChange(page)}
+                    >
+                      {page + 1}
+                    </Pagination.Item>
+                  ))}
+                </Pagination>
+              )}
             </Tab>
           </Tabs>
         </Container>
       </main>
 
-      {/* === MODAIS DE CONFIRMAÇÃO E EDIÇÃO === */}
+      {/* === MODAIS === */}
       <Modal
         show={!!userToDelete}
         onHide={() => setUserToDelete(null)}
@@ -656,10 +794,13 @@ function PaginaAdmin() {
             <Form.Group className="mb-3">
               <Form.Label>Telefone</Form.Label>
               <Form.Control
-                type="text"
+                as={IMaskInput}
+                mask="(00) 00000-0000"
                 name="telefone"
                 value={editUserFormData.telefone || ""}
-                onChange={handleEditUserFormChange}
+                onAccept={(value) =>
+                  setEditUserFormData((prev) => ({ ...prev, telefone: value }))
+                }
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -694,6 +835,115 @@ function PaginaAdmin() {
             </Modal.Footer>
           </Form>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={!!denunciaToEdit}
+        onHide={() => setDenunciaToEdit(null)}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Denúncia #{denunciaToEdit?.id} - {denunciaToEdit?.nome || "Anônimo"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleUpdateDenuncia}>
+            <Form.Group className="mb-3">
+              <Form.Label>Nome</Form.Label>
+              <Form.Control
+                type="text"
+                name="nome"
+                value={editDenunciaFormData.nome || ""}
+                onChange={handleEditDenunciaFormChange}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={editDenunciaFormData.email || ""}
+                onChange={handleEditDenunciaFormChange}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Data</Form.Label>
+              <Form.Control
+                type="text"
+                name="data"
+                value={
+                  editDenunciaFormData.data
+                    ? new Date(editDenunciaFormData.data).toLocaleString("pt-BR")
+                    : ""
+                }
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Local do Incidente</Form.Label>
+              <Form.Control
+                type="text"
+                name="localIncidente"
+                value={editDenunciaFormData.localIncidente || ""}
+                onChange={handleEditDenunciaFormChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descrição</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="descricao"
+                value={editDenunciaFormData.descricao || ""}
+                onChange={handleEditDenunciaFormChange}
+                rows={4}
+              />
+            </Form.Group>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setDenunciaToEdit(null)}>
+                Cancelar
+              </Button>
+              <Button variant="primary" type="submit">
+                Salvar Alterações
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={!!contatoToView}
+        onHide={() => setContatoToView(null)}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Mensagem de: {contatoToView?.nome}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <strong>ID:</strong> {contatoToView?.idContato}
+          </p>
+          <p>
+            <strong>Email:</strong>{" "}
+            <a href={`mailto:${contatoToView?.email}`}>
+              {contatoToView?.email}
+            </a>
+          </p>
+          <hr />
+          <h5>Mensagem:</h5>
+          <p style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+            {contatoToView?.mensagem}
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setContatoToView(null)}>
+            Fechar
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

@@ -31,6 +31,18 @@ public class SecurityFilter extends OncePerRequestFilter {
             var usuario = usuarioRepository.findByEmail(emailUsuario).orElse(null);
 
             if (usuario != null) {
+                var authorities = usuario.getAuthorities(); // Pega as permissões
+
+                // --- INÍCIO DO DEBUG ---
+                System.out.println("=============================================");
+                System.out.println("DEBUG FILTRO DE SEGURANÇA");
+                System.out.println("Endpoint Acessado: " + request.getRequestURI());
+                System.out.println("Usuário encontrado no token: " + usuario.getEmail());
+                System.out.println("Papel (Role) do usuário no banco: " + usuario.getRole());
+                System.out.println("Autoridades (Authorities) fornecidas ao Spring: " + authorities);
+                System.out.println("=============================================");
+                // --- FIM DO DEBUG ---
+
                 var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
