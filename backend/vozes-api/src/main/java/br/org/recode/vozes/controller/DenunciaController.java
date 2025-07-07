@@ -47,7 +47,8 @@ public class DenunciaController {
      */
     @GetMapping
     public ResponseEntity<Page<DenunciaResponseDTO>> listarDenuncias(
-            @PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
+            @PageableDefault(
+                    sort = {"data"}) Pageable paginacao) {
 
         Page<DenunciaResponseDTO> paginaDeDenuncias = denunciaService.listarTodas(paginacao);
         return ResponseEntity.ok(paginaDeDenuncias);

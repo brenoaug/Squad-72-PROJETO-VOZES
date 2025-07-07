@@ -5,6 +5,10 @@ import br.org.recode.vozes.DTO.ContatoResponseDTO;
 import br.org.recode.vozes.model.Contato;
 import br.org.recode.vozes.service.ContatoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +28,23 @@ public class ContatoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ContatoResponseDTO>> listarContatos() {
-        List<ContatoResponseDTO> contatos = contatoService.listarContatos();
-        return ResponseEntity.ok(contatos);
-    }
+    public ResponseEntity<Page<ContatoResponseDTO>> listarContatos(
+            @PageableDefault(
+                    sort = {"idContato"},
+                    direction = Sort.Direction.DESC) Pageable paginacao)
+        {
+            Page<ContatoResponseDTO> paginaDeContatos = contatoService.listarContatos(paginacao);
+            return ResponseEntity.ok(paginaDeContatos);
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ContatoResponseDTO> buscarContatosPorId(
-            @PathVariable Long id) {
-        try {
-            ContatoResponseDTO contatoDTO = contatoService.buscarContatosPorId(id);
-            return ResponseEntity.ok(contatoDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+        @GetMapping("/{id}")
+        public ResponseEntity<ContatoResponseDTO> buscarContatosPorId (
+                @PathVariable Long id){
+            try {
+                ContatoResponseDTO contatoDTO = contatoService.buscarContatosPorId(id);
+                return ResponseEntity.ok(contatoDTO);
+            } catch (RuntimeException e) {
+                return ResponseEntity.notFound().build();
+            }
         }
     }
-}

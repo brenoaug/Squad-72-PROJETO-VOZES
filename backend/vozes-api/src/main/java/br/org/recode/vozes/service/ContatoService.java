@@ -5,6 +5,8 @@ import br.org.recode.vozes.DTO.ContatoResponseDTO;
 import br.org.recode.vozes.model.Contato;
 import br.org.recode.vozes.repository.ContatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +29,11 @@ public class ContatoService {
         return contatoRepository.save(novoContato);
     }
 
-    public List<ContatoResponseDTO> listarContatos() {
-        return contatoRepository.findAll()
-                .stream()
-                .map(ContatoResponseDTO::new)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<ContatoResponseDTO> listarContatos(Pageable paginacao) {
+        // A chamada ao repositório agora passa as informações de paginação
+        return contatoRepository.findAll(paginacao)
+                .map(ContatoResponseDTO::new);
     }
 
     public ContatoResponseDTO buscarContatosPorId(Long id) {

@@ -42,147 +42,112 @@ function PaginaAdmin() {
 
   // --- ESTADOS PARA "GERENCIAR USUÁRIOS" ---
   const [users, setUsers] = useState([]);
-  const [usersPageInfo, setUsersPageInfo] = useState({
-    currentPage: 0,
-    totalPages: 0,
-  });
+  const [paginaAtualUsuarios, setPaginaAtualUsuarios] = useState(0);
+  const [totalPaginasUsuarios, setTotalPaginasUsuarios] = useState(0);
   const [userToDelete, setUserToDelete] = useState(null);
   const [userToEdit, setUserToEdit] = useState(null);
   const [editUserFormData, setEditUserFormData] = useState({});
 
   // --- ESTADOS PARA "GERENCIAR DENÚNCIAS" ---
   const [denuncias, setDenuncias] = useState([]);
-  const [denunciasPageInfo, setDenunciasPageInfo] = useState({
-    currentPage: 0,
-    totalPages: 0,
-  });
+  const [paginaAtualDenuncias, setPaginaAtualDenuncias] = useState(0);
+  const [totalPaginasDenuncias, setTotalPaginasDenuncias] = useState(0);
   const [denunciaToDelete, setDenunciaToDelete] = useState(null);
   const [denunciaToEdit, setDenunciaToEdit] = useState(null);
   const [editDenunciaFormData, setEditDenunciaFormData] = useState({});
 
   // --- ESTADOS PARA "GERENCIAR CONTATOS" ---
   const [contatos, setContatos] = useState([]);
-  const [contatosPageInfo, setContatosPageInfo] = useState({
-    currentPage: 0,
-    totalPages: 0,
-  });
+  const [paginaAtualContatos, setPaginaAtualContatos] = useState(0);
+  const [totalPaginasContatos, setTotalPaginasContatos] = useState(0);
   const [contatoToView, setContatoToView] = useState(null);
+  const [contatoToDelete, setContatoToDelete] = useState(null);
 
-  // --- FUNÇÕES DE BUSCA DE DADOS (FETCH) ---
-  const fetchUsers = async (page) => {
-    try {
-      const response = await api.get(
-        `/usuarios?page=${page}&size=15&sort=nome`
-      );
-      setUsers(response.data.content || []);
-      setUsersPageInfo({
-        currentPage: page,
-        totalPages: response.data.totalPages || 0,
-      });
-    } catch (err) {
-      console.error("Erro ao carregar usuários:", err);
-      setError("Falha ao carregar usuários.");
-    }
-  };
+  // Estado para debug da paginação
+  const [debugPaginacao, setDebugPaginacao] = useState({
+    usuarios: { carregados: 0, total: 0 },
+    denuncias: { carregados: 0, total: 0 },
+    contatos: { carregados: 0, total: 0 },
+  });
 
-  const fetchDenuncias = async (page) => {
-    try {
-      const response = await api.get(
-        `/denuncias?page=${page}&size=15&sort=id,desc`
-      );
-      setDenuncias(response.data.content || []);
-      setDenunciasPageInfo({
-        currentPage: page,
-        totalPages: response.data.totalPages || 0,
-      });
-    } catch (err) {
-      console.error("Erro ao carregar denúncias:", err);
-      setError("Falha ao carregar denúncias.");
-    }
-  };
+  // --- CHAMADAS DE API USANDO AXIOS (CORRIGIDAS) ---
 
-  // CORREÇÃO PRINCIPAL: Função fetchContatos adaptada para a estrutura real da API
-  const fetchContatos = async (page) => {
-    try {
-      console.log(`🔍 Buscando contatos - página: ${page}`);
-      const response = await api.get(
-        `/contatos?page=${page}&size=15&sort=idContato,desc`
-      );
-      console.log("📦 Resposta da API contatos:", response.data);
-      
-      // CORREÇÃO: Verificar se a API retorna array direto ou estrutura paginada
-      if (Array.isArray(response.data)) {
-        // API retorna array direto (caso atual)
-        console.log("✅ API retorna array direto com", response.data.length, "contatos");
-        setContatos(response.data);
-        setContatosPageInfo({
-          currentPage: 0,
-          totalPages: response.data.length > 0 ? 1 : 0,
+  // Buscar usuários
+  useEffect(() => {
+    if (
+      activeTab === "gerenciarUsuarios" &&
+      user?.role === "ADMIN" &&
+      !loading
+    ) {
+      console.log(`🔍 Carregando usuários - página: ${paginaAtualUsuarios}`);
+      api
+        .get(`/usuarios?page=${paginaAtualUsuarios}&size=5&sort=id,desc`)
+        .then((response) => {
+          console.log("📊 Dados de usuários recebidos:", response.data);
+          setUsers(response.data.content || []);
+          setTotalPaginasUsuarios(response.data.page?.totalPages || 0);
+        })
+        .catch((error) => {
+          console.error("❌ Erro na requisição de usuários:", error);
+          setError("Falha ao carregar usuários.");
         });
-      } else if (response.data && response.data.content) {
-        // API retorna estrutura paginada (caso esperado)
-        console.log("✅ API retorna estrutura paginada");
-        setContatos(response.data.content || []);
-        setContatosPageInfo({
-          currentPage: page,
-          totalPages: response.data.totalPages || 0,
+    }
+  }, [paginaAtualUsuarios, activeTab, user, loading]);
+
+  // Buscar denúncias
+  useEffect(() => {
+    if (
+      activeTab === "gerenciarDenuncias" &&
+      user?.role === "ADMIN" &&
+      !loading
+    ) {
+      console.log(`🔍 Carregando denúncias - página: ${paginaAtualDenuncias}`);
+      api
+        .get(`/denuncias?page=${paginaAtualDenuncias}&size=5&sort=id,desc`)
+        .then((response) => {
+          console.log("📊 Dados de denúncias recebidos:", response.data);
+          setDenuncias(response.data.content || []);
+          setTotalPaginasDenuncias(response.data.page?.totalPages || 0);
+        })
+        .catch((error) => {
+          console.error("❌ Erro na requisição de denúncias:", error);
+          setError("Falha ao carregar denúncias.");
         });
-      } else {
-        // Estrutura inesperada
-        console.warn("⚠️ Estrutura de resposta inesperada:", response.data);
-        setContatos([]);
-        setContatosPageInfo({
-          currentPage: 0,
-          totalPages: 0,
+    }
+  }, [paginaAtualDenuncias, activeTab, user, loading]);
+
+  // Buscar contatos
+  useEffect(() => {
+    if (
+      activeTab === "gerenciarContatos" &&
+      user?.role === "ADMIN" &&
+      !loading
+    ) {
+      console.log(`🔍 Carregando contatos - página: ${paginaAtualContatos}`);
+      api
+        .get(`/contatos?page=${paginaAtualContatos}&size=5&sort=idContato,desc`)
+        .then((response) => {
+          console.log("📊 Dados de contatos recebidos:", response.data);
+          setContatos(response.data.content || []);
+          setTotalPaginasContatos(response.data.page?.totalPages || 0);
+        })
+        .catch((error) => {
+          console.error("❌ Erro na requisição de contatos:", error);
+          setError("Falha ao carregar as mensagens de contato.");
         });
-      }
-    } catch (err) {
-      console.error("❌ Erro ao carregar contatos:", err);
-      setError("Falha ao carregar as mensagens de contato.");
-      setContatos([]);
-      setContatosPageInfo({
-        currentPage: 0,
-        totalPages: 0,
-      });
     }
-  };
+  }, [paginaAtualContatos, activeTab, user, loading]);
 
-  // useEffect principal para carregar dados quando a aba muda
+  // Reset da paginação quando muda de aba (CORRIGIDO)
   useEffect(() => {
-    if (!user || user.role !== "ADMIN" || loading) return;
-
-    console.log(`🔄 Aba ativa mudou para: ${activeTab}`);
-
-    if (activeTab === "gerenciarUsuarios") {
-      fetchUsers(0);
-    } else if (activeTab === "gerenciarDenuncias") {
-      fetchDenuncias(0);
-    } else if (activeTab === "gerenciarContatos") {
-      fetchContatos(0);
-    }
-  }, [activeTab, user, loading]);
-
-  // useEffects separados para mudanças de página
-  useEffect(() => {
-    if (!user || user.role !== "ADMIN" || loading) return;
-    if (activeTab === "gerenciarUsuarios") {
-      fetchUsers(usersPageInfo.currentPage);
-    }
-  }, [usersPageInfo.currentPage]);
-
-  useEffect(() => {
-    if (!user || user.role !== "ADMIN" || loading) return;
-    if (activeTab === "gerenciarDenuncias") {
-      fetchDenuncias(denunciasPageInfo.currentPage);
-    }
-  }, [denunciasPageInfo.currentPage]);
-
-  useEffect(() => {
-    if (!user || user.role !== "ADMIN" || loading) return;
-    if (activeTab === "gerenciarContatos") {
-      fetchContatos(contatosPageInfo.currentPage);
-    }
-  }, [contatosPageInfo.currentPage]);
+    console.log(`🔄 Mudando para aba: ${activeTab}`);
+    setPaginaAtualUsuarios(0);
+    setPaginaAtualDenuncias(0);
+    setPaginaAtualContatos(0);
+    // Limpar mensagens de erro/sucesso quando muda de aba
+    setError("");
+    setSuccess("");
+  }, [activeTab]);
 
   // Efeito para popular o formulário do admin
   useEffect(() => {
@@ -234,7 +199,8 @@ function PaginaAdmin() {
       updateUser(response.data);
       setSuccess("Seus dados foram atualizados com sucesso!");
       setIsEditingAdmin(false);
-    } catch (err) {
+    } catch (error) {
+      console.error("Erro ao atualizar admin:", error);
       setError("Falha ao atualizar seus dados.");
     }
   };
@@ -266,6 +232,7 @@ function PaginaAdmin() {
       ...editUserFormData,
       [e.target.name]: e.target.value,
     });
+
   const handleEditUserTelefoneChange = (value) =>
     setEditUserFormData((prev) => ({ ...prev, telefone: value }));
 
@@ -281,8 +248,9 @@ function PaginaAdmin() {
       await api.patch(`/usuarios/${userToEdit.id}`, dataToUpdate);
       setUserToEdit(null);
       setSuccess(`Usuário ${userToEdit.nome} atualizado com sucesso.`);
-      fetchUsers(usersPageInfo.currentPage);
-    } catch (err) {
+      reloadUsersData();
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
       setError("Falha ao atualizar usuário.");
     }
   };
@@ -293,13 +261,15 @@ function PaginaAdmin() {
       await api.delete(`/usuarios/${userToDelete.id}`);
       setUserToDelete(null);
       setSuccess(`Usuário ${userToDelete.nome} deletado com sucesso.`);
-      fetchUsers(usersPageInfo.currentPage);
-    } catch (err) {
+      reloadUsersData();
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
       setError("Falha ao deletar usuário.");
       setUserToDelete(null);
     }
   };
 
+  // HANDLER CORRIGIDO PARA MODAL DE DENÚNCIAS
   const handleOpenEditDenunciaModal = (denuncia) => {
     setDenunciaToEdit(denuncia);
     setEditDenunciaFormData({
@@ -326,8 +296,9 @@ function PaginaAdmin() {
       await api.put(`/denuncias/${denunciaToEdit.id}`, editDenunciaFormData);
       setDenunciaToEdit(null);
       setSuccess(`Denúncia #${denunciaToEdit.id} atualizada com sucesso.`);
-      fetchDenuncias(denunciasPageInfo.currentPage);
-    } catch (err) {
+      reloadDenunciasData();
+    } catch (error) {
+      console.error("Erro ao atualizar denúncia:", error);
       setError("Falha ao atualizar a denúncia.");
     }
   };
@@ -338,22 +309,97 @@ function PaginaAdmin() {
       await api.delete(`/denuncias/${denunciaToDelete.id}`);
       setDenunciaToDelete(null);
       setSuccess(`Denúncia #${denunciaToDelete.id} deletada com sucesso.`);
-      fetchDenuncias(denunciasPageInfo.currentPage);
-    } catch (err) {
+      reloadDenunciasData();
+    } catch (error) {
+      console.error("Erro ao deletar denúncia:", error);
       setError("Falha ao deletar denúncia.");
       setDenunciaToDelete(null);
     }
   };
 
-  // Handler para mudança de página dos contatos (adaptado para API sem paginação)
-  const handleContatosPageChange = (page) => {
-    console.log(`📄 Tentativa de mudança para página ${page} dos contatos`);
-    // Como a API atual retorna todos os contatos, não há paginação real
-    // Mas mantemos a interface para consistência
-    setContatosPageInfo({
-      ...contatosPageInfo,
-      currentPage: page,
-    });
+  const handleDeleteContato = async () => {
+    if (!contatoToDelete) return;
+    try {
+      await api.delete(`/contatos/${contatoToDelete.idContato}`);
+      setContatoToDelete(null);
+      setSuccess(`Mensagem de ${contatoToDelete.nome} deletada com sucesso.`);
+      reloadContatosData();
+    } catch (error) {
+      console.error("Erro ao deletar contato:", error);
+      setError("Falha ao deletar a mensagem de contato.");
+      setContatoToDelete(null);
+    }
+  };
+
+  // --- HANDLERS DE PAGINAÇÃO (CORRIGIDOS) ---
+  const handleUsersPageChange = (newPage) => {
+    console.log(`📄 Mudando página de usuários para: ${newPage}`);
+    setPaginaAtualUsuarios(newPage);
+  };
+
+  const handleDenunciasPageChange = (newPage) => {
+    console.log(`📄 Mudando página de denúncias para: ${newPage}`);
+    setPaginaAtualDenuncias(newPage);
+  };
+
+  const handleContatosPageChange = (newPage) => {
+    console.log(`📄 Mudando página de contatos para: ${newPage}`);
+    setPaginaAtualContatos(newPage);
+  };
+
+  // --- FUNÇÕES DE RECARREGAMENTO (CORRIGIDAS) ---
+  const reloadUsersData = () => {
+    console.log(
+      `Recarregando dados de usuários - página: ${paginaAtualUsuarios}`
+    );
+    api
+      .get(`/usuarios?page=${paginaAtualUsuarios}&size=5&sort=id,desc`)
+      .then((response) => {
+        setUsers(response.data.content || []);
+        setTotalPaginasUsuarios(response.data.page?.totalPages || 0);
+      })
+      .catch((error) => console.error("Erro ao recarregar usuários:", error));
+  };
+
+  const reloadDenunciasData = () => {
+    console.log(
+      `Recarregando dados de denúncias - página: ${paginaAtualDenuncias}`
+    );
+    api
+      .get(`/denuncias?page=${paginaAtualDenuncias}&size=5&sort=id,desc`)
+      .then((response) => {
+        setDenuncias(response.data.content || []);
+        setTotalPaginasDenuncias(response.data.page?.totalPages || 0);
+      })
+      .catch((error) => console.error("Erro ao recarregar denúncias:", error));
+  };
+
+  const reloadContatosData = () => {
+    console.log(
+      `Recarregando dados de contatos - página: ${paginaAtualContatos}`
+    );
+    api
+      .get(`/contatos?page=${paginaAtualContatos}&size=5&sort=idContato,desc`)
+      .then((response) => {
+        setContatos(response.data.content || []);
+        setTotalPaginasContatos(response.data.page?.totalPages || 0);
+      })
+      .catch((error) => console.error("Erro ao recarregar contatos:", error));
+  };
+
+  // Função para forçar a exibição da paginação (para debug)
+  const forcarExibirPaginacao = () => {
+    console.log("🔧 Forçando exibição da paginação");
+    if (activeTab === "gerenciarUsuarios" && totalPaginasUsuarios <= 1) {
+      setTotalPaginasUsuarios(2);
+    } else if (
+      activeTab === "gerenciarDenuncias" &&
+      totalPaginasDenuncias <= 1
+    ) {
+      setTotalPaginasDenuncias(2);
+    } else if (activeTab === "gerenciarContatos" && totalPaginasContatos <= 1) {
+      setTotalPaginasContatos(2);
+    }
   };
 
   if (loading || !user) {
@@ -509,14 +555,42 @@ function PaginaAdmin() {
               </Card>
             </Tab>
 
-            {/* ABA 2: GERENCIAR USUÁRIOS */}
+            {/* ABA 2: GERENCIAR USUÁRIOS - PAGINAÇÃO CORRIGIDA */}
             <Tab eventKey="gerenciarUsuarios" title="Gerenciar Usuários">
+              <div className="mb-3 d-flex justify-content-between align-items-center">
+                <small className={dark ? "text-light" : "text-muted"}>
+                  Mostrando {users.length} usuários - Página{" "}
+                  {paginaAtualUsuarios + 1} de {totalPaginasUsuarios}
+                </small>
+                <Button
+                  variant="outline-info"
+                  size="sm"
+                  onClick={() => {
+                    console.log("🔧 Debug - Forçando reload de usuários");
+                    api
+                      .get(
+                        `/usuarios?page=${paginaAtualUsuarios}&size=5&sort=id,desc`
+                      )
+                      .then((response) => {
+                        console.log("📊 Response completa:", response.data);
+                        setUsers(response.data.content || []);
+                        setTotalPaginasUsuarios(
+                          response.data.page?.totalPages || 0
+                        );
+                      });
+                  }}
+                >
+                  <i className="bi bi-arrow-repeat pe-1"></i>Atualizar
+                </Button>
+              </div>
+
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
+                className="admin-table"
               >
                 <thead>
                   <tr>
@@ -528,66 +602,141 @@ function PaginaAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((u) => (
-                    <tr key={u.id}>
-                      <td>{u.id}</td>
-                      <td>{u.nome}</td>
-                      <td>{u.email}</td>
-                      <td>
-                        <Badge
-                          bg={
-                            u.tipoUsuario === "PROFISSIONAL"
-                              ? "info"
-                              : "secondary"
-                          }
-                        >
-                          {u.tipoUsuario}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleOpenEditModal(u)}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => setUserToDelete(u)}
-                        >
-                          Deletar
-                        </Button>
+                  {users.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        {loading
+                          ? "Carregando usuários..."
+                          : "Nenhum usuário encontrado"}
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    users.map((u) => (
+                      <tr key={u.id}>
+                        <td>{u.id}</td>
+                        <td>{u.nome}</td>
+                        <td>{u.email}</td>
+                        <td>
+                          <Badge
+                            bg={
+                              u.tipoUsuario === "PROFISSIONAL"
+                                ? "info"
+                                : "secondary"
+                            }
+                          >
+                            {u.tipoUsuario}
+                          </Badge>
+                        </td>
+                        <td>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleOpenEditModal(u)}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => setUserToDelete(u)}
+                          >
+                            Deletar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </Table>
-              <Pagination className="justify-content-center">
-                {[...Array(usersPageInfo.totalPages).keys()].map((page) => (
-                  <Pagination.Item
-                    key={page}
-                    active={page === usersPageInfo.currentPage}
-                    onClick={() =>
-                      setUsersPageInfo({ ...usersPageInfo, currentPage: page })
-                    }
-                  >
-                    {page + 1}
-                  </Pagination.Item>
-                ))}
-              </Pagination>
+
+              {/* PAGINAÇÃO CORRIGIDA */}
+              {totalPaginasUsuarios > 1 && (
+                <div className="d-flex justify-content-center mt-3">
+                  <Pagination className="admin-pagination">
+                    <Pagination.First
+                      onClick={() => {
+                        console.log("📄 Primeira página de usuários");
+                        handleUsersPageChange(0);
+                      }}
+                      disabled={paginaAtualUsuarios === 0}
+                    />
+                    <Pagination.Prev
+                      onClick={() => {
+                        console.log("📄 Página anterior de usuários");
+                        handleUsersPageChange(paginaAtualUsuarios - 1);
+                      }}
+                      disabled={paginaAtualUsuarios === 0}
+                    />
+
+                    {Array.from({ length: totalPaginasUsuarios }, (_, i) => (
+                      <Pagination.Item
+                        key={i}
+                        active={i === paginaAtualUsuarios}
+                        onClick={() => {
+                          console.log(`📄 Página ${i + 1} de usuários`);
+                          handleUsersPageChange(i);
+                        }}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => {
+                        console.log("📄 Próxima página de usuários");
+                        handleUsersPageChange(paginaAtualUsuarios + 1);
+                      }}
+                      disabled={paginaAtualUsuarios >= totalPaginasUsuarios - 1}
+                    />
+                    <Pagination.Last
+                      onClick={() => {
+                        console.log("📄 Última página de usuários");
+                        handleUsersPageChange(totalPaginasUsuarios - 1);
+                      }}
+                      disabled={paginaAtualUsuarios >= totalPaginasUsuarios - 1}
+                    />
+                  </Pagination>
+                </div>
+              )}
             </Tab>
 
-            {/* ABA 3: GERENCIAR DENÚNCIAS */}
+            {/* ABA 3: GERENCIAR DENÚNCIAS - PAGINAÇÃO CORRIGIDA */}
             <Tab eventKey="gerenciarDenuncias" title="Gerenciar Denúncias">
+              <div className="mb-3 d-flex justify-content-between align-items-center">
+                <small className={dark ? "text-light" : "text-muted"}>
+                  Mostrando {denuncias.length} denúncias - Página{" "}
+                  {paginaAtualDenuncias + 1} de {totalPaginasDenuncias}
+                </small>
+                <Button
+                  variant="outline-info"
+                  size="sm"
+                  onClick={() => {
+                    console.log("🔧 Debug - Forçando reload de denúncias");
+                    api
+                      .get(
+                        `/denuncias?page=${paginaAtualDenuncias}&size=5&sort=id,desc`
+                      )
+                      .then((response) => {
+                        console.log("📊 Response completa:", response.data);
+                        setDenuncias(response.data.content || []);
+                        setTotalPaginasDenuncias(
+                          response.data.page?.totalPages || 0
+                        );
+                      });
+                  }}
+                >
+                  <i className="bi bi-arrow-repeat pe-1"></i>Atualizar
+                </Button>
+              </div>
+
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
+                className="admin-table"
               >
                 <thead>
                   <tr>
@@ -599,72 +748,135 @@ function PaginaAdmin() {
                   </tr>
                 </thead>
                 <tbody>
-                  {denuncias.map((d) => (
-                    <tr key={d.id}>
-                      <td>{d.id}</td>
-                      <td>{d.nome || "Anônimo"}</td>
-                      <td>{new Date(d.data).toLocaleDateString("pt-BR")}</td>
-                      <td>{d.localIncidente}</td>
-                      <td>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleOpenEditDenunciaModal(d)}
-                        >
-                          Ver/Editar
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => setDenunciaToDelete(d)}
-                        >
-                          Deletar
-                        </Button>
+                  {denuncias.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        {loading
+                          ? "Carregando denúncias..."
+                          : "Nenhuma denúncia encontrada"}
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    denuncias.map((d) => (
+                      <tr key={d.id}>
+                        <td>{d.id}</td>
+                        <td>{d.nome || "Anônimo"}</td>
+                        <td>{new Date(d.data).toLocaleDateString("pt-BR")}</td>
+                        <td>{d.localIncidente}</td>
+                        <td>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleOpenEditDenunciaModal(d)}
+                          >
+                            Ver/Editar
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => setDenunciaToDelete(d)}
+                          >
+                            Deletar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </Table>
-              <Pagination className="justify-content-center">
-                {[...Array(denunciasPageInfo.totalPages).keys()].map((page) => (
-                  <Pagination.Item
-                    key={page}
-                    active={page === denunciasPageInfo.currentPage}
-                    onClick={() =>
-                      setDenunciasPageInfo({
-                        ...denunciasPageInfo,
-                        currentPage: page,
-                      })
-                    }
-                  >
-                    {page + 1}
-                  </Pagination.Item>
-                ))}
-              </Pagination>
+
+              {/* PAGINAÇÃO CORRIGIDA */}
+              {totalPaginasDenuncias > 1 && (
+                <div className="d-flex justify-content-center mt-3">
+                  <Pagination className="admin-pagination">
+                    <Pagination.First
+                      onClick={() => {
+                        console.log("📄 Primeira página de denúncias");
+                        handleDenunciasPageChange(0);
+                      }}
+                      disabled={paginaAtualDenuncias === 0}
+                    />
+                    <Pagination.Prev
+                      onClick={() => {
+                        console.log("📄 Página anterior de denúncias");
+                        handleDenunciasPageChange(paginaAtualDenuncias - 1);
+                      }}
+                      disabled={paginaAtualDenuncias === 0}
+                    />
+
+                    {Array.from({ length: totalPaginasDenuncias }, (_, i) => (
+                      <Pagination.Item
+                        key={i}
+                        active={i === paginaAtualDenuncias}
+                        onClick={() => {
+                          console.log(`📄 Página ${i + 1} de denúncias`);
+                          handleDenunciasPageChange(i);
+                        }}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => {
+                        console.log("📄 Próxima página de denúncias");
+                        handleDenunciasPageChange(paginaAtualDenuncias + 1);
+                      }}
+                      disabled={
+                        paginaAtualDenuncias >= totalPaginasDenuncias - 1
+                      }
+                    />
+                    <Pagination.Last
+                      onClick={() => {
+                        console.log("📄 Última página de denúncias");
+                        handleDenunciasPageChange(totalPaginasDenuncias - 1);
+                      }}
+                      disabled={
+                        paginaAtualDenuncias >= totalPaginasDenuncias - 1
+                      }
+                    />
+                  </Pagination>
+                </div>
+              )}
             </Tab>
 
-            {/* ABA 4: GERENCIAR CONTATOS - CORRIGIDA PARA ESTRUTURA REAL DA API */}
+            {/* ABA 4: GERENCIAR CONTATOS - PAGINAÇÃO CORRIGIDA */}
             <Tab eventKey="gerenciarContatos" title="Gerenciar Contatos">
-              {/* Debug info para desenvolvimento 
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mb-3 p-2 bg-info text-dark rounded">
-                  <small>
-                    <strong>Debug:</strong> {contatos.length} contatos carregados | 
-                    Página atual: {contatosPageInfo.currentPage} | 
-                    Total de páginas: {contatosPageInfo.totalPages} |
-                    Loading: {loading ? 'true' : 'false'} |
-                    User role: {user?.role}
-                  </small>
-                </div>
-              )}*/}
-              
+              <div className="mb-3 d-flex justify-content-between align-items-center">
+                <small className={dark ? "text-light" : "text-muted"}>
+                  Mostrando {contatos.length} contatos - Página{" "}
+                  {paginaAtualContatos + 1} de {totalPaginasContatos}
+                </small>
+                <Button
+                  variant="outline-info"
+                  size="sm"
+                  onClick={() => {
+                    console.log("🔧 Debug - Forçando reload de contatos");
+                    api
+                      .get(
+                        `/contatos?page=${paginaAtualContatos}&size=5&sort=idContato,desc`
+                      )
+                      .then((response) => {
+                        console.log("📊 Response completa:", response.data);
+                        setContatos(response.data.content || []);
+                        setTotalPaginasContatos(
+                          response.data.page?.totalPages || 0
+                        );
+                      });
+                  }}
+                >
+                  <i className="bi bi-arrow-repeat pe-1"></i>Atualizar
+                </Button>
+              </div>
+
               <Table
                 striped
                 bordered
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
+                className="admin-table"
               >
                 <thead>
                   <tr>
@@ -678,7 +890,9 @@ function PaginaAdmin() {
                   {contatos.length === 0 ? (
                     <tr>
                       <td colSpan="4" className="text-center">
-                        {loading ? "Carregando contatos..." : "Nenhum contato encontrado"}
+                        {loading
+                          ? "Carregando contatos..."
+                          : "Nenhum contato encontrado"}
                       </td>
                     </tr>
                   ) : (
@@ -689,11 +903,19 @@ function PaginaAdmin() {
                         <td>{contato.email}</td>
                         <td>
                           <Button
-                            variant="outline-info"
+                            variant="outline-primary"
                             size="sm"
+                            className="me-2"
                             onClick={() => setContatoToView(contato)}
                           >
                             Visualizar Mensagem
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => setContatoToDelete(contato)}
+                          >
+                            Deletar
                           </Button>
                         </td>
                       </tr>
@@ -701,27 +923,62 @@ function PaginaAdmin() {
                   )}
                 </tbody>
               </Table>
-              
-              {/* Paginação - adaptada para API sem paginação real */}
-              {contatosPageInfo.totalPages > 1 && (
-                <Pagination className="justify-content-center">
-                  {[...Array(contatosPageInfo.totalPages).keys()].map((page) => (
-                    <Pagination.Item
-                      key={page}
-                      active={page === contatosPageInfo.currentPage}
-                      onClick={() => handleContatosPageChange(page)}
-                    >
-                      {page + 1}
-                    </Pagination.Item>
-                  ))}
-                </Pagination>
+
+              {/* PAGINAÇÃO CORRIGIDA */}
+              {totalPaginasContatos > 1 && (
+                <div className="d-flex justify-content-center mt-3">
+                  <Pagination className="admin-pagination">
+                    <Pagination.First
+                      onClick={() => {
+                        console.log("📄 Primeira página de contatos");
+                        handleContatosPageChange(0);
+                      }}
+                      disabled={paginaAtualContatos === 0}
+                    />
+                    <Pagination.Prev
+                      onClick={() => {
+                        console.log("📄 Página anterior de contatos");
+                        handleContatosPageChange(paginaAtualContatos - 1);
+                      }}
+                      disabled={paginaAtualContatos === 0}
+                    />
+
+                    {Array.from({ length: totalPaginasContatos }, (_, i) => (
+                      <Pagination.Item
+                        key={i}
+                        active={i === paginaAtualContatos}
+                        onClick={() => {
+                          console.log(`📄 Página ${i + 1} de contatos`);
+                          handleContatosPageChange(i);
+                        }}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => {
+                        console.log("📄 Próxima página de contatos");
+                        handleContatosPageChange(paginaAtualContatos + 1);
+                      }}
+                      disabled={paginaAtualContatos >= totalPaginasContatos - 1}
+                    />
+                    <Pagination.Last
+                      onClick={() => {
+                        console.log("📄 Última página de contatos");
+                        handleContatosPageChange(totalPaginasContatos - 1);
+                      }}
+                      disabled={paginaAtualContatos >= totalPaginasContatos - 1}
+                    />
+                  </Pagination>
+                </div>
               )}
             </Tab>
           </Tabs>
         </Container>
       </main>
-
       {/* === MODAIS === */}
+      {/* Modal de confirmação de exclusão de usuário */}
       <Modal
         show={!!userToDelete}
         onHide={() => setUserToDelete(null)}
@@ -744,6 +1001,7 @@ function PaginaAdmin() {
         </Modal.Footer>
       </Modal>
 
+      {/* Modal de confirmação de exclusão de denúncia */}
       <Modal
         show={!!denunciaToDelete}
         onHide={() => setDenunciaToDelete(null)}
@@ -767,6 +1025,30 @@ function PaginaAdmin() {
         </Modal.Footer>
       </Modal>
 
+      {/* Modal de confirmação de exclusão de contato */}
+      <Modal
+        show={!!contatoToDelete}
+        onHide={() => setContatoToDelete(null)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Exclusão</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Tem certeza que deseja deletar a mensagem de{" "}
+          <strong>{contatoToDelete?.nome}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setContatoToDelete(null)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleDeleteContato}>
+            Confirmar Exclusão
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de edição de usuário */}
       <Modal show={!!userToEdit} onHide={() => setUserToEdit(null)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Editar Usuário: {userToEdit?.nome}</Modal.Title>
@@ -798,9 +1080,7 @@ function PaginaAdmin() {
                 mask="(00) 00000-0000"
                 name="telefone"
                 value={editUserFormData.telefone || ""}
-                onAccept={(value) =>
-                  setEditUserFormData((prev) => ({ ...prev, telefone: value }))
-                }
+                onAccept={handleEditUserTelefoneChange}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -821,7 +1101,7 @@ function PaginaAdmin() {
                   onChange={handleEditUserFormChange}
                 >
                   <option value="ADVOGADO">ADVOGADO</option>
-                  <option value="PSICOLOGO">PSICOLOGO</option>
+                  <option value="PSICOLOGO">PSICÓLOGO</option>
                 </Form.Select>
               </Form.Group>
             )}
@@ -837,6 +1117,7 @@ function PaginaAdmin() {
         </Modal.Body>
       </Modal>
 
+      {/* Modal de edição de denúncia - CORRIGIDO */}
       <Modal
         show={!!denunciaToEdit}
         onHide={() => setDenunciaToEdit(null)}
@@ -877,7 +1158,9 @@ function PaginaAdmin() {
                 name="data"
                 value={
                   editDenunciaFormData.data
-                    ? new Date(editDenunciaFormData.data).toLocaleString("pt-BR")
+                    ? new Date(editDenunciaFormData.data).toLocaleString(
+                        "pt-BR"
+                      )
                     : ""
                 }
                 readOnly
@@ -903,7 +1186,10 @@ function PaginaAdmin() {
               />
             </Form.Group>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setDenunciaToEdit(null)}>
+              <Button
+                variant="secondary"
+                onClick={() => setDenunciaToEdit(null)}
+              >
                 Cancelar
               </Button>
               <Button variant="primary" type="submit">
@@ -914,6 +1200,7 @@ function PaginaAdmin() {
         </Modal.Body>
       </Modal>
 
+      {/* Modal de visualização de contato */}
       <Modal
         show={!!contatoToView}
         onHide={() => setContatoToView(null)}
