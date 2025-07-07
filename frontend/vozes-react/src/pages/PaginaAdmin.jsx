@@ -402,7 +402,6 @@ function PaginaAdmin() {
                 </Form>
               </Container>
             </Tab>
-
             {/* === ABA 2: GERENCIAR USUÁRIOS === */}
             <Tab eventKey="gerenciarUsuarios" title="Gerenciar Usuários">
               <Table
@@ -473,7 +472,6 @@ function PaginaAdmin() {
                 ))}
               </Pagination>
             </Tab>
-
             {/* === ABA 3: GERENCIAR DENÚNCIAS === */}
             <Tab eventKey="gerenciarDenuncias" title="Gerenciar Denúncias">
               <Table
@@ -540,6 +538,46 @@ function PaginaAdmin() {
                   </Pagination.Item>
                 ))}
               </Pagination>
+            </Tab>
+            <Tab
+              eventKey="gerenciarContatos"
+              title="Gerenciar Contatos"
+              onEnter={() =>
+                alert(
+                  "Funcionalidade de Gerenciar Contatos ainda não está implementada."
+                )
+              }
+            >
+              <Table
+                striped
+                bordered
+                hover
+                responsive="sm"
+                className="admin-table"
+              >
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Mensagem</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Maria Silva</td>
+                    <td>maria@email.com</td>
+                    <td>Gostaria de saber mais sobre o projeto.</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>João Souza</td>
+                    <td>joao@email.com</td>
+                    <td>Encontrei um problema no site.</td>
+                  </tr>
+                </tbody>
+              </Table>
             </Tab>
           </Tabs>
         </Container>
