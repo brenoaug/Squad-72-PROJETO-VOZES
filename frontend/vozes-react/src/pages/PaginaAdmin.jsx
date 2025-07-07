@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
@@ -63,15 +63,6 @@ function PaginaAdmin() {
   const [contatoToView, setContatoToView] = useState(null);
   const [contatoToDelete, setContatoToDelete] = useState(null);
 
-  // Estado para debug da paginação
-  const [debugPaginacao, setDebugPaginacao] = useState({
-    usuarios: { carregados: 0, total: 0 },
-    denuncias: { carregados: 0, total: 0 },
-    contatos: { carregados: 0, total: 0 },
-  });
-
-  // --- CHAMADAS DE API USANDO AXIOS (CORRIGIDAS) ---
-
   // Buscar usuários
   useEffect(() => {
     if (
@@ -85,7 +76,9 @@ function PaginaAdmin() {
         .then((response) => {
           console.log("📊 Dados de usuários recebidos:", response.data);
           setUsers(response.data.content || []);
-          setTotalPaginasUsuarios(response.data.page?.totalPages || 0);
+          setTotalPaginasUsuarios(
+            response.data.page?.totalPages ?? response.data.totalPages ?? 0
+          );
         })
         .catch((error) => {
           console.error("❌ Erro na requisição de usuários:", error);
@@ -107,7 +100,9 @@ function PaginaAdmin() {
         .then((response) => {
           console.log("📊 Dados de denúncias recebidos:", response.data);
           setDenuncias(response.data.content || []);
-          setTotalPaginasDenuncias(response.data.page?.totalPages || 0);
+          setTotalPaginasDenuncias(
+            response.data.page?.totalPages ?? response.data.totalPages ?? 0
+          );
         })
         .catch((error) => {
           console.error("❌ Erro na requisição de denúncias:", error);
@@ -129,7 +124,9 @@ function PaginaAdmin() {
         .then((response) => {
           console.log("📊 Dados de contatos recebidos:", response.data);
           setContatos(response.data.content || []);
-          setTotalPaginasContatos(response.data.page?.totalPages || 0);
+          setTotalPaginasContatos(
+            response.data.page?.totalPages ?? response.data.totalPages ?? 0
+          );
         })
         .catch((error) => {
           console.error("❌ Erro na requisição de contatos:", error);
@@ -387,21 +384,6 @@ function PaginaAdmin() {
       .catch((error) => console.error("Erro ao recarregar contatos:", error));
   };
 
-  // Função para forçar a exibição da paginação (para debug)
-  const forcarExibirPaginacao = () => {
-    console.log("🔧 Forçando exibição da paginação");
-    if (activeTab === "gerenciarUsuarios" && totalPaginasUsuarios <= 1) {
-      setTotalPaginasUsuarios(2);
-    } else if (
-      activeTab === "gerenciarDenuncias" &&
-      totalPaginasDenuncias <= 1
-    ) {
-      setTotalPaginasDenuncias(2);
-    } else if (activeTab === "gerenciarContatos" && totalPaginasContatos <= 1) {
-      setTotalPaginasContatos(2);
-    }
-  };
-
   if (loading || !user) {
     return <div>Verificando permissões...</div>;
   }
@@ -591,13 +573,14 @@ function PaginaAdmin() {
                 responsive="sm"
                 variant={dark ? "dark" : ""}
                 className="admin-table"
+                style={{ verticalAlign: "middle" }}
               >
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Tipo</th>
+                    <th style={{ textAlign: "center" }}>Tipo</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
@@ -616,33 +599,48 @@ function PaginaAdmin() {
                         <td>{u.id}</td>
                         <td>{u.nome}</td>
                         <td>{u.email}</td>
-                        <td>
-                          <Badge
-                            bg={
-                              u.tipoUsuario === "PROFISSIONAL"
-                                ? "info"
-                                : "secondary"
-                            }
-                          >
-                            {u.tipoUsuario}
-                          </Badge>
+                        <td
+                          style={{
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <div className="d-flex justify-content-center gap-1">
+                            <Badge
+                              bg={
+                                u.tipoUsuario === "PROFISSIONAL"
+                                  ? "warning text-dark"
+                                  : "secondary"
+                              }
+                            >
+                              {u.tipoUsuario}
+                            </Badge>
+                            {u.role === "ADMIN" && (
+                              <Badge bg="danger" className="ms-1">
+                                <i className="bi bi-shield-fill-check pe-1"></i>{" "}
+                                ADMIN
+                              </Badge>
+                            )}
+                          </div>
                         </td>
                         <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleOpenEditModal(u)}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => setUserToDelete(u)}
-                          >
-                            Deletar
-                          </Button>
+                          <div className="d-flex justify-content-center gap-1">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => handleOpenEditModal(u)}
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => setUserToDelete(u)}
+                            >
+                              Deletar
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -737,6 +735,7 @@ function PaginaAdmin() {
                 responsive="sm"
                 variant={dark ? "dark" : ""}
                 className="admin-table"
+                style={{ verticalAlign: "middle" }}
               >
                 <thead>
                   <tr>
@@ -764,21 +763,23 @@ function PaginaAdmin() {
                         <td>{new Date(d.data).toLocaleDateString("pt-BR")}</td>
                         <td>{d.localIncidente}</td>
                         <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleOpenEditDenunciaModal(d)}
-                          >
-                            Ver/Editar
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => setDenunciaToDelete(d)}
-                          >
-                            Deletar
-                          </Button>
+                          <div className="d-flex justify-content-center gap-1">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => handleOpenEditDenunciaModal(d)}
+                            >
+                              Ver/Editar
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => setDenunciaToDelete(d)}
+                            >
+                              Deletar
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -877,13 +878,14 @@ function PaginaAdmin() {
                 responsive="sm"
                 variant={dark ? "dark" : ""}
                 className="admin-table"
+                style={{ verticalAlign: "middle" }}
               >
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Ações</th>
+                    <th style={{ textAlign: "center" }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -901,22 +903,29 @@ function PaginaAdmin() {
                         <td>{contato.idContato}</td>
                         <td>{contato.nome}</td>
                         <td>{contato.email}</td>
-                        <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => setContatoToView(contato)}
-                          >
-                            Visualizar Mensagem
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => setContatoToDelete(contato)}
-                          >
-                            Deletar
-                          </Button>
+                        <td
+                          style={{
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <div className="d-flex justify-content-center gap-1">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => setContatoToView(contato)}
+                            >
+                              Visualizar Mensagem
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => setContatoToDelete(contato)}
+                            >
+                              Deletar
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))
