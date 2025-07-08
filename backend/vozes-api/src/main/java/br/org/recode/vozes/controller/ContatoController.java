@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,20 +32,31 @@ public class ContatoController {
     public ResponseEntity<Page<ContatoResponseDTO>> listarContatos(
             @PageableDefault(
                     sort = {"idContato"},
-                    direction = Sort.Direction.DESC) Pageable paginacao)
-        {
-            Page<ContatoResponseDTO> paginaDeContatos = contatoService.listarContatos(paginacao);
-            return ResponseEntity.ok(paginaDeContatos);
-        }
+                    direction = Sort.Direction.DESC) Pageable paginacao) {
+        Page<ContatoResponseDTO> paginaDeContatos = contatoService.listarContatos(paginacao);
+        return ResponseEntity.ok(paginaDeContatos);
+    }
 
-        @GetMapping("/{id}")
-        public ResponseEntity<ContatoResponseDTO> buscarContatosPorId (
-                @PathVariable Long id){
-            try {
-                ContatoResponseDTO contatoDTO = contatoService.buscarContatosPorId(id);
-                return ResponseEntity.ok(contatoDTO);
-            } catch (RuntimeException e) {
-                return ResponseEntity.notFound().build();
-            }
+    @GetMapping("/{id}")
+    public ResponseEntity<ContatoResponseDTO> buscarContatosPorId(
+            @PathVariable Long id) {
+        try {
+            ContatoResponseDTO contatoDTO = contatoService.buscarContatosPorId(id);
+            return ResponseEntity.ok(contatoDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removerContato(@PathVariable Long id) {
+        try {
+            contatoService.removerContato(id);
+            return ResponseEntity.noContent().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

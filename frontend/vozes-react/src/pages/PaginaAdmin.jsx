@@ -266,7 +266,7 @@ function PaginaAdmin() {
     }
   };
 
-  // HANDLER CORRIGIDO PARA MODAL DE DENÚNCIAS
+  // HANDLER PARA MODAL DE DENÚNCIAS
   const handleOpenEditDenunciaModal = (denuncia) => {
     setDenunciaToEdit(denuncia);
     setEditDenunciaFormData({
@@ -328,7 +328,7 @@ function PaginaAdmin() {
     }
   };
 
-  // --- HANDLERS DE PAGINAÇÃO (CORRIGIDOS) ---
+  // --- HANDLERS DE PAGINAÇÃO ---
   const handleUsersPageChange = (newPage) => {
     console.log(`📄 Mudando página de usuários para: ${newPage}`);
     setPaginaAtualUsuarios(newPage);
@@ -344,7 +344,7 @@ function PaginaAdmin() {
     setPaginaAtualContatos(newPage);
   };
 
-  // --- FUNÇÕES DE RECARREGAMENTO (CORRIGIDAS) ---
+  // --- FUNÇÕES DE RECARREGAMENTO ---
   const reloadUsersData = () => {
     console.log(
       `Recarregando dados de usuários - página: ${paginaAtualUsuarios}`
@@ -572,10 +572,10 @@ function PaginaAdmin() {
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
-                className="admin-table"
+                className="admin-table text-center"
                 style={{ verticalAlign: "middle" }}
               >
-                <thead>
+                <thead className="text-center">
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
@@ -734,10 +734,10 @@ function PaginaAdmin() {
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
-                className="admin-table"
+                className="admin-table text-center"
                 style={{ verticalAlign: "middle" }}
               >
-                <thead>
+                <thead className="text-center">
                   <tr>
                     <th>ID</th>
                     <th>Denunciante</th>
@@ -877,10 +877,10 @@ function PaginaAdmin() {
                 hover
                 responsive="sm"
                 variant={dark ? "dark" : ""}
-                className="admin-table"
+                className="admin-table text-center"
                 style={{ verticalAlign: "middle" }}
               >
-                <thead>
+                <thead className="text-center">
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
