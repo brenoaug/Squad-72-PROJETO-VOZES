@@ -5,7 +5,8 @@ import axios from 'axios';
 // O fallback 'http://localhost:8080' é para quando a variável de ambiente não está definida,
 // por exemplo, se você rodar o npm start puro sem o Docker Compose.
 // A parte '/api' do endpoint será adicionada aqui, pois você a usa em todas as chamadas.
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// Para projetos Vite, use import.meta.env; para Create React App, mantenha process.env
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const api = axios.create({
   // Combina a URL base dinâmica com o prefixo '/api'
