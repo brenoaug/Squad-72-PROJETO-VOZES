@@ -1,56 +1,42 @@
-# Versão do Docker Compose
 version: '3.8'
 
-# Definindo os serviços (contêineres)
 services:
-
-  # Serviço do Banco de Dados
-  db:
-    image: mysql:8.0 # Usa a imagem oficial do MySQL 8
-    container_name: mysql-db
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword # Senha do usuário root
-      MYSQL_DATABASE: vozes_db    # Nome do banco de dados que será criado
-      MYSQL_USER: root                # Nome do usuário
-      MYSQL_PASSWORD: password        # Senha do usuário
+  # Serviço do Banco de Dados PostgreSQL
+  database:
+    image: postgres:15-alpine # Usa uma imagem oficial e leve do Postgres
+    container_name: vozes_db_container
     ports:
-      # Expõe a porta 3306 do contêiner na porta 3307 do seu computador
-      # Assim você pode conectar no banco usando um cliente como DBeaver/HeidiSQL em localhost:3307
-      - "3307:3306"
+      - "5432:5432" # Mapeia a porta do contêiner para a sua máquina
+    environment:
+      - POSTGRES_USER=vozesuser
+      - POSTGRES_PASSWORD=vozespass
+      - POSTGRES_DB=vozes
     volumes:
-      # 'mysql-data' é um volume nomeado. O Docker gerencia ele para nós.
-      # Isso garante que seus dados não sejam perdidos quando o contêiner for recriado.
-      - mysql-data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
-  # Serviço do Backend
+  # Serviço do Back-end Spring Boot
   backend:
-    build: ./backend/vozes-api/ # Diz para o Compose construir a imagem usando o Dockerfile na pasta ./backend
-    container_name: springboot-api
-    restart: on-failure
-    depends_on:
-      - db # Diz para esperar o serviço 'db' estar pronto antes de iniciar o backend
+    container_name: vozes_api_container
+    build:
+      context: ./backend/vozes-api # Caminho para o Dockerfile do backend
     ports:
-      # Expõe a porta 8080 do contêiner na porta 8080 do seu computador
-      - "8080:8080"
+      - "8080:8080" # Mapeia a porta da API
+    depends_on:
+      - database # Diz ao Docker para iniciar o banco ANTES do backend
     environment:
-      # Passando as variáveis de ambiente que definimos no application.properties
-      DB_HOST: db # 'db' é o nome do serviço do MySQL, Docker usará isso como hostname
-      DB_NAME: minha_api_db
-      DB_USER: user
-      DB_PASSWORD: password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/vozes
+      - SPRING_DATASOURCE_USERNAME=vozesuser
+      - SPRING_DATASOURCE_PASSWORD=vozespass
+      - API_SECURITY_TOKEN_SECRET=sua-chave-secreta-aqui
 
-  # Serviço do Frontend
+  # Serviço do Front-end React
   frontend:
-    build: ./frontend/vozes-react
-    container_name: react-app
-    restart: on-failure
+    container_name: vozes_frontend_container
+    build:
+      # MUDANÇA: O contexto agora aponta para a pasta correta do seu projeto React.
+      context: ./frontend/vozes-react
     ports:
-      # Expõe a porta 80 do Nginx (dentro do contêiner) na porta 3000 do seu computador
-      - "3000:80"
-    depends_on:
-      - backend # Opcional, mas bom para garantir que a API suba primeiro
+      - "5173:80" # Mapeia a porta 80 do Nginx para a porta 5173 da sua máquina
 
-# Volumes nomeados que o Docker gerencia
 volumes:
-  mysql-data:
+  postgres_data:
