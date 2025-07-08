@@ -1,5 +1,5 @@
-# --- Estágio 1: Build com Maven ---
-# Usamos uma imagem oficial do Maven com Java 21 para compilar nosso projeto.
+# --- Build com Maven ---
+# Imagem oficial do Maven com Java 21
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 
 # Define o diretório de trabalho dentro do contêiner.

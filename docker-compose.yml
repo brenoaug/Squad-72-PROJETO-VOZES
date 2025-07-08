@@ -1,30 +1,48 @@
-version: '3.8'
-
 services:
-  # Serviço do Banco de Dados PostgreSQL
+  # Serviço do Banco de Dados MySQL
   database:
-    image: postgres:15-alpine # Usa uma imagem oficial e leve do Postgres
+    image: mysql:8.0
     container_name: vozes_db_container
     ports:
-      - "5432:5432" # Mapeia a porta do contêiner para a sua máquina
+      - "3306:3306"
     environment:
-      - POSTGRES_USER=vozesuser
-      - POSTGRES_PASSWORD=vozespass
-      - POSTGRES_DB=vozes
+      - MYSQL_ROOT_PASSWORD=vozespass
+      - MYSQL_DATABASE=vozes
+      - MYSQL_USER=vozesuser
+      - MYSQL_PASSWORD=vozespass
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysql",
+          "--protocol=tcp",
+          "-h",
+          "127.0.0.1",
+          "-u",
+          "vozesuser",
+          "-pvozespass",
+          "-e",
+          "SELECT 1;",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Serviço do Back-end Spring Boot
   backend:
     container_name: vozes_api_container
     build:
-      context: ./backend/vozes-api # Caminho para o Dockerfile do backend
+      context: ./backend/vozes-api
     ports:
-      - "8080:8080" # Mapeia a porta da API
+      - "8080:8080"
     depends_on:
-      - database # Diz ao Docker para iniciar o banco ANTES do backend
+      database:
+        condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/vozes
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/vozes
       - SPRING_DATASOURCE_USERNAME=vozesuser
       - SPRING_DATASOURCE_PASSWORD=vozespass
       - API_SECURITY_TOKEN_SECRET=sua-chave-secreta-aqui
@@ -33,10 +51,9 @@ services:
   frontend:
     container_name: vozes_frontend_container
     build:
-      # MUDANÇA: O contexto agora aponta para a pasta correta do seu projeto React.
       context: ./frontend/vozes-react
     ports:
-      - "5173:80" # Mapeia a porta 80 do Nginx para a porta 5173 da sua máquina
+      - "5173:80"
 
 volumes:
-  postgres_data:
+  mysql_data:
