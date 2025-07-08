@@ -30,7 +30,8 @@ public class UsuarioController {
      */
     @GetMapping
     public ResponseEntity<Page<UsuarioResponseDTO>> listarTodosUsuarios(
-            @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+            @PageableDefault(
+                    sort = {"nome"}) Pageable paginacao) {
         Page<UsuarioResponseDTO> pagina = usuarioService.listarTodosUsuarios(paginacao);
         return ResponseEntity.ok(pagina);
     }
