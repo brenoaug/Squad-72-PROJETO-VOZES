@@ -107,6 +107,11 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>7.0.5.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
     </dependencies>
 
 	<build>
