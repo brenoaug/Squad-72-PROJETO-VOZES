@@ -2,9 +2,7 @@ Squad 72 - Projeto Vozes
 
 ## Integrantes Ativos
 
-* **Adrielle Hanna** (Líder)
-* **Luke Roger** (Vice-Líder)
-* **Rogério Batista**
+* **Adrielle Hanna**
 * **Breno Augusto**
 
 ## Desafio Escolhido e Visão do Projeto
@@ -135,17 +133,35 @@ A aplicação foi implantada na plataforma **Render.com**
   * Desenvolvimento e testes (estilização CSS, implementação de scripts e Bootstrap).
   * Apresentação (slides, pitch, bastidores).
   * Entrega do projeto.
+* **Junho**
+  * Criação do Projeto React
+    * Inicialização do projeto com npm e Vite
+    * Migração das páginas estáticas
+  * Desenvolvimento da API Backend
+    * Criação de API REST com Spring Boot (Java 21)
+    * Conexão com o banco de dados MySQL via JPA
+  * Integração e Testes
+    * Comunicação entre frontend e backend com Axios
+    * Teste das APIs e validação visual das páginas
+    * Implementação de autenticação e autorização com JWT 
+* **Julho** 
+  * Infraestrutura com Docker
+    * Conteinerização dos serviços com Docker
+    * Orquestração com Docker Compose
+    * Servir o frontend com Nginx via container
+  * Deploy na Nuvem (Render.com)
+    * Implantação da API Backend (Spring Boot) como Web Service
+    * Publicação do Frontend (React + Vite) como Static Site
+    * Configuração do banco de dados PostgreSQL no ambiente cloud 
 
 ## Distribuição das Atividades no Squad
 
-* **Rogério Batista:** Ideação, Slide, Apresentação.
-* **Adrielle Hanna:** Pesquisa, Programação, Modelagem do Banco de Dados.
-* **Luke Roger:** Pesquisa, Programação, Modelagem do Banco de Dados.
-* **Breno Augusto:** Transformação do HTML/CSS original em Frontend React, Desenvolvimento do Backend com persistência de dados, Implementação de autenticação e autorização usando Token JWT no Backend, Modificação e criação de logos do site utilizando Figma.
+* **Adrielle Hanna:** Pesquisa/Ideação, Criação do HTML/CSS, Modelagem conceitual do Banco de Dados, Slide/Apresentação.
+* **Breno Augusto:** Transformação do HTML/CSS original em Frontend React, Desenvolvimento do Backend com persistência de dados, Implementação de autenticação e autorização usando Token JWT no Backend, Modificação e criação de logos do site utilizando Figma, Slide/Apresentação.
 
 ## Ferramenta de Gerenciamento
 
-A equipe utilizará **Notion** para monitoramento das atividades.
+A equipe utiliza **Notion** para monitoramento das atividades.
 
 ## Links Importantes
 
