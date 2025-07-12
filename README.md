@@ -83,12 +83,16 @@ Para iniciar todos os serviços localmente, siga estes passos:
   
 2. **Clone o Repositório:**
   
+      ```
       git clone https://github.com/brenoaug/Squad-72-PROJETO-VOZES.git
       cd Squad-72-PROJETO-VOZES
+      ```
   
 3. **Inicie os Contêineres:**
   
-      docker-compose up --build -d
+     ```
+     docker-compose up --build -d
+     ```
   
   Este comando irá construir as imagens Docker (se necessário), criar uma rede interna e iniciar os contêineres de banco de dados (MySQL), backend (Spring Boot) e frontend (React).O volume `mysql_data` será criado para persistir os dados do banco. Se você precisar reiniciar o banco do zero, use `docker-compose down -v` antes.
   
@@ -146,5 +150,5 @@ A equipe utilizará **Notion** para monitoramento das atividades.
 ## Links Importantes
 
 * **Site Funcional (Deploy no Render):** [Vozes](https://projeto-vozes-frontend.onrender.com/)
-* **Repositório GitHub:** [GitHub Squad 72](https://github.com/adriellehanna/Squad-72-PROJETO-VOZES.git )
-* **URL da API (Backend no Render):** [projeto-vozes-backend](https://squad-72-projeto-vozes.onrender.com/)
+* **Repositório GitHub:** [GitHub Squad 72](https://github.com/brenoaug/Squad-72-PROJETO-VOZES.git )
+* **URL da API (Backend no Render):** [projeto-vozes-backend](https://squad-72-projeto-vozes.onrender.com/) (Devido ao *spin down* do Render, ao clicar no link da API você pode ativar o back-end. No entanto, como o serviço possui autenticação e autorização implementadas, o acesso será negado assim que a instância estiver totalmente inicializada.)
