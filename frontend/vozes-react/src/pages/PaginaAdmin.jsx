@@ -537,7 +537,7 @@ function PaginaAdmin() {
               </Card>
             </Tab>
 
-            {/* ABA 2: GERENCIAR USUÁRIOS - PAGINAÇÃO CORRIGIDA */}
+            {/* ABA 2: GERENCIAR USUÁRIOS */}
             <Tab eventKey="gerenciarUsuarios" title="Gerenciar Usuários">
               <div className="mb-3 d-flex justify-content-between align-items-center">
                 <small className={dark ? "text-light" : "text-muted"}>
