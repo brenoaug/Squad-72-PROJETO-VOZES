@@ -71,7 +71,6 @@ O repositório está organizado nas seguintes pastas principais:
 * `backend/vozes-api/`: Contém o código-fonte da API Spring Boot e seu Dockerfile.
 * `frontend/vozes-react/`: Contém o código-fonte da aplicação React e seu Dockerfile.
 * `docker-compose.yml`: Arquivo para orquestração local dos serviços.
-* `render.yaml`: Arquivo de configuração para deploy da aplicação no Render.
 
 ## Como Rodar a Aplicação Localmente (com Docker Compose)
 
