@@ -1,4 +1,4 @@
-Squad 72 - Projeto Vozes
+# Squad 72 - Projeto Vozes
 
 ## Integrantes Ativos
 
