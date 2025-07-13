@@ -1,10 +1,13 @@
 package br.org.recode.vozes.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,10 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -45,13 +44,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/denuncias/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/denuncias/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/denuncias/**").hasAuthority("ROLE_ADMIN")
+                        
                         // Endpoints de contato
                         .requestMatchers(HttpMethod.POST, "/api/contatos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/contatos/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/contatos/**").hasAuthority("ROLE_ADMIN")
 
                         // Endpoints de profissionais (listagem pública)
-                        .requestMatchers(HttpMethod.GET, "/api/profissionais/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/profissionais").permitAll()
 
                         // --- REGRAS MAIS GENÉRICAS DEPOIS ---
                         // Qualquer outra operação em /api/usuarios exige autenticação
