@@ -91,7 +91,7 @@ Para iniciar todos os serviços localmente, siga estes passos:
      docker-compose up --build -d
      ```
   
-  Este comando irá construir as imagens Docker (se necessário), criar uma rede interna e iniciar os contêineres de banco de dados (MySQL), backend (Spring Boot) e frontend (React).O volume `mysql_data` será criado para persistir os dados do banco. Se você precisar reiniciar o banco do zero, use `docker-compose down -v` antes.
+  Este comando irá construir as imagens Docker, criar uma rede interna e iniciar os contêineres de banco de dados (MySQL), backend (Spring Boot) e frontend (React).
   
 4. **Acesse a Aplicação:**
   
