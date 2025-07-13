@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/contatos/**").hasAuthority("ROLE_ADMIN")
 
                         // Endpoints de profissionais (listagem pública)
-                        .requestMatchers(HttpMethod.GET, "/api/profissionais/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/profissionais").permitAll()
 
                         // --- REGRAS MAIS GENÉRICAS DEPOIS ---
                         // Qualquer outra operação em /api/usuarios exige autenticação
